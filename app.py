@@ -1,63 +1,40 @@
 import streamlit as st
 
-# =====================================================
-# PAGE CONFIG
-# =====================================================
+# ---------------- PAGE CONFIG ----------------
 st.set_page_config(
     page_title="Meta Fees Calculator",
-    page_icon="🧮",
     layout="centered"
 )
 
-# =====================================================
-# HEADER
-# =====================================================
-st.markdown(
-    """
-    <h2 style="text-align:center;">🧮 Meta Fees Calculator</h2>
-    <p style="text-align:center; color:gray;">
-        Wego & TripSaverz – Operation Team Tool
-    </p>
-    """,
-    unsafe_allow_html=True
+st.title("🧮 Meta Fees Calculator")
+st.caption("Wego & TripSaverz – Operation Team Tool")
+
+# ---------------- INPUTS ----------------
+meta_partner = st.selectbox(
+    "Meta Partner",
+    ["Wego", "TripSaverz"]
 )
 
-st.divider()
+flight_type = st.selectbox(
+    "Flight Type",
+    ["Domestic", "International"]
+)
 
-# =====================================================
-# INPUT SECTION
-# =====================================================
-col1, col2 = st.columns(2)
+booking_amount = st.number_input(
+    "Booking Amount (₹)",
+    min_value=0.0,
+    step=100.0
+)
 
-with col1:
-    meta_partner = st.selectbox(
-        "Meta Partner",
-        ["Wego", "TripSaverz"]
-    )
+pax_count = st.number_input(
+    "Passenger Count",
+    min_value=1,
+    step=1
+)
 
-    flight_type = st.selectbox(
-        "Flight Type",
-        ["Domestic", "International"]
-    )
-
-with col2:
-    booking_amount = st.number_input(
-        "Booking Amount (₹)",
-        min_value=0.0,
-        step=100.0
-    )
-
-    pax_count = st.number_input(
-        "Passenger Count",
-        min_value=1,
-        step=1
-    )
-
-# =====================================================
-# FEES LOGIC
-# =====================================================
+# ---------------- FEES LOGIC ----------------
 def calculate_meta_fee(meta, flight, amount, pax):
-    fee = 0.0
+    fee = 0
 
     # WEGO LOGIC
     if meta == "Wego":
@@ -75,16 +52,8 @@ def calculate_meta_fee(meta, flight, amount, pax):
 
     return round(fee, 2)
 
-# =====================================================
-# CALCULATE BUTTON & RESULT
-# =====================================================
-st.divider()
-
-center_col = st.columns([1, 2, 1])[1]
-with center_col:
-    calculate_clicked = st.button("Calculate Meta Fees", use_container_width=True)
-
-if calculate_clicked:
+# ---------------- CALCULATE BUTTON ----------------
+if st.button("Calculate Meta Fees"):
     meta_fee = calculate_meta_fee(
         meta_partner,
         flight_type,
@@ -92,41 +61,25 @@ if calculate_clicked:
         pax_count
     )
 
-    st.markdown(
-        f"""
-        <div style="
-            background-color:#f8f9fa;
-            padding:20px;
-            border-radius:10px;
-            text-align:center;
-            margin-top:15px;
-            border:1px solid #e0e0e0;
-        ">
-            <p style="color:gray; margin-bottom:5px;">Meta Fees</p>
-            <h2 style="margin:0;">₹ {meta_fee}</h2>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.divider()
+    st.subheader("💰 Meta Fees")
+    st.write(f"₹ {meta_fee}")
 
-# =====================================================
-# FIXED FOOTER (LEFT BOTTOM)
-# =====================================================
+# ---------------- FIXED FOOTER (LEFT BOTTOM) ----------------
 st.markdown(
     """
     <style>
     .footer {
         position: fixed;
-        left: 12px;
+        left: 10px;
         bottom: 10px;
         color: #6c757d;
         font-size: 12px;
-        z-index: 999;
     }
     </style>
 
     <div class="footer">
-        Auto-updated via GitHub
+        Auto-updated via GitHub | Updated on 24 Dec 2025
     </div>
     """,
     unsafe_allow_html=True
