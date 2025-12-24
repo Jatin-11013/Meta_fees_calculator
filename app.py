@@ -1,4 +1,4 @@
-%%writefile "C:/Users/Jatin Yadav/OneDrive/Desktop/wego_app.py"
+%%writefile "C:/Users/Jatin Yadav/OneDrive/Desktop/app.py"
 import streamlit as st
 
 st.set_page_config(page_title="Meta Fees Calculator", layout="centered")
