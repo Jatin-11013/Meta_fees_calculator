@@ -34,24 +34,14 @@ pax_count = st.number_input(
 
 # ---------------- FEES LOGIC ----------------
 def calculate_meta_fee(meta, flight, amount, pax):
-    """
-    Returns meta fee per booking
-    """
     fee = 0
 
     # WEGO LOGIC
     if meta == "Wego":
         if flight == "Domestic":
-            if pax <= 2:
-                fee = 200
-            else:
-                fee = 300
-
+            fee = 200 if pax <= 2 else 300
         elif flight == "International":
-            if amount <= 30000:
-                fee = 400
-            else:
-                fee = 600
+            fee = 400 if amount <= 30000 else 600
 
     # TRIPSAVERZ LOGIC
     elif meta == "TripSaverz":
@@ -62,26 +52,16 @@ def calculate_meta_fee(meta, flight, amount, pax):
 
     return round(fee, 2)
 
-meta_fee = calculate_meta_fee(
-    meta_partner,
-    flight_type,
-    booking_amount,
-    pax_count
-)
+# ---------------- CALCULATE BUTTON ----------------
+if st.button("Calculate Meta Fees"):
+    meta_fee = calculate_meta_fee(
+        meta_partner,
+        flight_type,
+        booking_amount,
+        pax_count
+    )
 
-net_amount = round(booking_amount - meta_fee, 2)
-
-# ---------------- OUTPUT ----------------
-st.divider()
-st.subheader("📊 Calculation Result")
-
-st.write(f"**Meta Fee:** ₹ {meta_fee}")
-st.write(f"**Net Amount After Fees:** ₹ {net_amount}")
-
-if net_amount < 0:
-    st.error("⚠️ NEGATIVE BOOKING – Do not proceed")
-else:
-    st.success("✅ SAFE BOOKING")
-
-# ---------------- FOOTER ----------------
-st.caption("Auto-updated via GitHub | Same link for Ops Team")
+    st.divider()
+    st.subheader("💰 Meta Fees")
+    st.write(f"₹ {meta_fee}")
+st.caption("Auto-updated via GitHub")
