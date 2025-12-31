@@ -3,7 +3,7 @@ import streamlit as st
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
     page_title="Meta + DI Booking Safety Calculator",
-    layout="centered"
+    layout="wide"   # ✅ FULL WIDTH
 )
 
 st.title("🧮 Meta + DI Booking Safety Calculator")
@@ -110,9 +110,7 @@ def calculate_meta_fee(meta, flight, amount, pax):
         base_fee = 400 if amount <= 30000 else 600
 
     ads_fee = 120 if meta == "Wego Ads" else 0
-    total_fee = base_fee + ads_fee
-
-    return total_fee, base_fee, ads_fee
+    return base_fee + ads_fee, base_fee, ads_fee
 
 # ---------------- CALCULATE ----------------
 st.markdown("###")
@@ -128,31 +126,36 @@ if st.button("🧮 Calculate"):
     sale_side = booking_amount + di_amount
     difference = round(sale_side - purchase_side, 2)
 
-    # ---------------- OUTPUT ----------------
     st.divider()
     st.subheader("📊 Calculation Summary")
 
-    st.write(f"**Supplier:** {supplier_name}")
-    st.write(f"**DI %:** {di_rate * 100:.2f}%")
-    st.write(f"**DI Amount:** ₹ {di_amount}")
+    # -------- OUTPUT HORIZONTAL --------
+    o1, o2, o3 = st.columns(3)
 
-    st.write("---")
-    st.write(f"**Meta Partner:** {meta_partner}")
-    st.write(f"**Base Meta Fee:** ₹ {base_fee}")
-    if meta_partner == "Wego Ads":
-        st.write(f"**Wego Ads Fee:** ₹ {ads_fee}")
-    st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
+    with o1:
+        st.markdown("### 🏷 Supplier & DI")
+        st.write(f"**Supplier:** {supplier_name}")
+        st.write(f"**DI %:** {di_rate * 100:.2f}%")
+        st.write(f"**DI Amount:** ₹ {di_amount}")
 
-    st.write("---")
-    st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
-    st.write(f"**Sale Side (Booking + DI):** ₹ {sale_side}")
+    with o2:
+        st.markdown("### 📢 Meta Fees")
+        st.write(f"**Meta Partner:** {meta_partner}")
+        st.write(f"**Base Meta Fee:** ₹ {base_fee}")
+        if meta_partner == "Wego Ads":
+            st.write(f"**Wego Ads Fee:** ₹ {ads_fee}")
+        st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
 
-    st.subheader(f"💹 Difference: ₹ {difference}")
+    with o3:
+        st.markdown("### 💰 Purchase vs Sale")
+        st.write(f"**Purchase Side:** ₹ {purchase_side}")
+        st.write(f"**Sale Side:** ₹ {sale_side}")
+        st.markdown(f"### 💹 Difference: ₹ {difference}")
 
-    if difference < 0:
-        st.error("❌ Loss Booking")
-    else:
-        st.success("✅ Safe Booking")
+        if difference < 0:
+            st.error("❌ Loss Booking")
+        else:
+            st.success("✅ Safe Booking")
 
 # ---------------- FOOTER ----------------
 st.markdown(
