@@ -148,8 +148,8 @@ if st.button("🧮 Calculate"):
 
     with o3:
         st.markdown("### 💰 Purchase vs Sale")
-        st.write(f"**Purchase Side:** ₹ {purchase_side}")
-        st.write(f"**Sale Side:** ₹ {sale_side}")
+        st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
+        st.write(f"**Sale Side (Booking + DI):** ₹ {sale_side}")
         st.markdown(f"### 💹 Difference: ₹ {difference}")
 
         if difference < 0:
