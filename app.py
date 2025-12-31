@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# -------- REMOVE EXTRA TOP SPACE --------
+# -------- REMOVE EXTRA TOP SPACE & SMALLER FONTS --------
 st.markdown(
     """
     <style>
@@ -14,11 +14,15 @@ st.markdown(
         padding-top: 1rem;
     }
     .summary-box p {
-        font-size: 13px;
-        margin-bottom: 4px;
+        font-size: 12px;
+        margin-bottom: 3px;
     }
     .summary-box h3 {
-        font-size: 16px;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    .stSelectbox label, .stNumberInput label {
+        font-size: 13px;
     }
     </style>
     """,
@@ -150,6 +154,7 @@ if st.button("🧮 Calculate"):
     difference = round(sale_side - purchase_side, 2)
 
     st.divider()
+    st.subheader("📊 Calculation Summary")
     st.markdown('<div class="summary-box">', unsafe_allow_html=True)
 
     o1, o2, o3 = st.columns(3)
