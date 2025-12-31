@@ -13,6 +13,13 @@ st.markdown(
     .block-container {
         padding-top: 1rem;
     }
+    .summary-box p {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    .summary-box h3 {
+        font-size: 16px;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -42,10 +49,50 @@ supplier_di = {
     "BTO Bhasin Travels HAP OP7": 0.0184,
     "Bhasin Travel Online HAP 7U63": 0.0184,
     "AIR IQ": 0.01,
-    "Tripjack Flights": 0.005
+    "Tripjack Flights": 0.005,
+    # ZERO DI suppliers
+    "Consulate General of Indonesia-Mumbai": 0,
+    "RIYA HAP 6A4T": 0,
+    "Consulate Genenal Of Hungary - Visa": 0,
+    "MUSAFIR.COM INDIA PVT LTD": 0,
+    "MASTER BSP": 0,
+    "Japan vfs": 0,
+    "VFS Global Georgia - Visa": 0,
+    "Akbar Travels HAP 3OT9": 0,
+    "GRNConnect": 0,
+    "CHINA VFS": 0,
+    "FLYCREATIVE ONLINE PVT. LTD (LCC)": 0,
+    "Bajaj Allianz General Insurance": 0,
+    "South Africa VFS": 0,
+    "MakeMyTrip (India) Private Limited": 0,
+    "Travelport Universal Api": 0,
+    "Deputy High Commission of Bangladesh, Mumbai": 0,
+    "Bajaj Allianz General Insurance - Aertrip A/C": 0,
+    "Germany Visa": 0,
+    "Cleartrip Private Limited - AB 1": 0,
+    "CDV HOLIDAYS PRIVATE LIMITED": 0,
+    "Rudraa Tours And Travels Jayashree Patil": 0,
+    "France Vfs": 0,
+    "Vietnam Embassy New Delhi": 0,
+    "Srilanka E Visa": 0,
+    "Morocco Embassy New Delhi": 0,
+    "Regional Passport Office-Mumbai": 0,
+    "Klook Travel Tech Ltd Hong Kong HK": 0,
+    "VANDANA VISA SERVICES": 0,
+    "Consulate General of the Republic of Poland": 0,
+    "Akbar Travel online AG43570": 0,
+    "Just Click N Pay": 0,
+    "IRCTC": 0,
+    "Akbar Travels of India Pvt Ltd - (AG004261)": 0,
+    "Embassy of Gabon": 0,
+    "Go Airlines (India) Limited ( Offline )": 0,
+    "UK VFS": 0,
+    "GO KITE TRAVELS AND TOURS LLP": 0,
+    "Travel super Mall (IXBAIU9800)": 0,
+    "AirIQ Flights series Supplier": 0
 }
 
-# -------- ADD OTHER OPTION --------
+# -------- ADD OTHER OPTION AT TOP --------
 supplier_list = sorted(supplier_di.keys())
 supplier_list.insert(0, "Other")
 
@@ -80,12 +127,10 @@ with c7:
 def calculate_meta_fee(meta, flight, amount, pax):
     if meta == "None":
         return 0, 0, 0
-
     if flight == "Domestic":
         base_fee = 200 if pax <= 2 else 300
     else:
         base_fee = 400 if amount <= 30000 else 600
-
     ads_fee = 120 if meta == "Wego Ads" else 0
     return base_fee + ads_fee, base_fee, ads_fee
 
@@ -96,7 +141,7 @@ if st.button("🧮 Calculate"):
         meta_partner, flight_type, purchase_amount, pax_count
     )
 
-    # -------- DI LOGIC FOR OTHER --------
+    # DI logic: Other = 0, rest from dict
     di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
     di_amount = round(purchase_amount * di_rate, 2)
 
@@ -105,47 +150,25 @@ if st.button("🧮 Calculate"):
     difference = round(sale_side - purchase_side, 2)
 
     st.divider()
-
-    # -------- SMALLER FONT FOR SUMMARY --------
-    st.markdown(
-        """
-        <style>
-        .summary-box p {
-            font-size: 13px;
-            margin-bottom: 4px;
-        }
-        .summary-box h3 {
-            font-size: 16px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.subheader("📊 Calculation Summary")
+    st.markdown('<div class="summary-box">', unsafe_allow_html=True)
 
     o1, o2, o3 = st.columns(3)
 
     with o1:
-        st.markdown('<div class="summary-box">', unsafe_allow_html=True)
         st.markdown("### 🏷 Supplier & DI")
         st.write(f"**Supplier:** {supplier_name}")
         st.write(f"**DI %:** {di_rate * 100:.2f}%")
         st.write(f"**DI Amount:** ₹ {di_amount}")
-        st.markdown('</div>', unsafe_allow_html=True)
 
     with o2:
-        st.markdown('<div class="summary-box">', unsafe_allow_html=True)
         st.markdown("### 📢 Meta Fees")
         st.write(f"**Meta Partner:** {meta_partner}")
-        st.write(f"**Base Meta Fee:** ₹ {base_fee}")
+        st.write(f"**Base Fee:** ₹ {base_fee}")
         if meta_partner == "Wego Ads":
-            st.write(f"**Wego Ads Fee:** ₹ {ads_fee}")
+            st.write(f"**Ads Fee:** ₹ {ads_fee}")
         st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
-        st.markdown('</div>', unsafe_allow_html=True)
 
     with o3:
-        st.markdown('<div class="summary-box">', unsafe_allow_html=True)
         st.markdown("### 💰 Purchase vs Sale")
         st.write(f"**Purchase Side:** ₹ {purchase_side}")
         st.write(f"**Sale Side:** ₹ {sale_side}")
@@ -155,4 +178,25 @@ if st.button("🧮 Calculate"):
             st.error("❌ Loss Booking")
         else:
             st.success("✅ Safe Booking")
-        st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------------- FOOTER ----------------
+st.markdown(
+    """
+    <style>
+    .footer {
+        position: fixed;
+        left: 10px;
+        bottom: 10px;
+        color: #6c757d;
+        font-size: 12px;
+    }
+    </style>
+
+    <div class="footer">
+        Auto-updated via GitHub
+    </div>
+    """,
+    unsafe_allow_html=True
+)
