@@ -2,7 +2,7 @@ import streamlit as st
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
-    page_title="Meta + DI Booking Safety Calculator",
+    page_title="Booking Safety Calculator",
     layout="wide"
 )
 
@@ -29,7 +29,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("🧮 Meta + DI Booking Safety Calculator")
+st.title("🧮 Booking Safety Calculator")
 st.caption("Operation Team – Safe vs Loss Booking Tool")
 
 # ---------------- DI MASTER ----------------
@@ -200,7 +200,7 @@ st.markdown(
     </style>
 
     <div class="footer">
-        Auto-updated via GitHub
+        Auto-updated via GitHub | Last update on 31 Dec
     </div>
     """,
     unsafe_allow_html=True
