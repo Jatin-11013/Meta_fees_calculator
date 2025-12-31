@@ -2,14 +2,14 @@ import streamlit as st
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
-    page_title="Meta Fees, DI & Booking Safety Calculator",
+    page_title="Meta + DI Booking Safety Calculator",
     layout="centered"
 )
 
-st.title("🧮 Meta Fees, DI & Booking Safety Calculator")
-st.caption("Wego / Wego Ads + Supplier DI – Operation Team Tool")
+st.title("🧮 Meta + DI Booking Safety Calculator")
+st.caption("Operation Team – Safe vs Loss Booking Tool")
 
-# ---------------- SUPPLIER DI MASTER ----------------
+# ---------------- DI MASTER ----------------
 supplier_di = {
     "TBO Flights Online - BOMA774": 0.0084,
     "FlyShop Series Online API": 0.01,
@@ -27,81 +27,121 @@ supplier_di = {
     "Indigo Regular Fare (Corporate)(KTBOM278)": 0.0045,
     "Indigo Retail Chandni (14354255C)": 0.0034,
     "Indigo Regular Corp Chandni (14354255C)": 0.0034,
+    "Consulate General of Indonesia-Mumbai": 0,
+    "RIYA HAP 6A4T": 0,
+    "Consulate Genenal Of Hungary - Visa": 0,
+    "MUSAFIR.COM INDIA PVT LTD": 0,
+    "MASTER BSP": 0,
+    "Japan vfs": 0,
+    "VFS Global Georgia - Visa": 0,
+    "Akbar Travels HAP 3OT9": 0,
+    "GRNConnect": 0,
+    "CHINA VFS": 0,
+    "FLYCREATIVE ONLINE PVT. LTD (LCC)": 0,
+    "Bajaj Allianz General Insurance": 0,
+    "South Africa VFS": 0,
+    "MakeMyTrip (India) Private Limited": 0,
+    "Travelport Universal Api": 0,
+    "Deputy High Commission of Bangladesh, Mumbai": 0,
+    "Bajaj Allianz General Insurance - Aertrip A/C": 0,
+    "Germany Visa": 0,
+    "Cleartrip Private Limited - AB 1": 0,
+    "CDV HOLIDAYS PRIVATE LIMITED": 0,
+    "Rudraa Tours And Travels Jayashree Patil": 0,
+    "France Vfs": 0,
+    "Vietnam Embassy New Delhi": 0,
+    "Srilanka E Visa": 0,
+    "Morocco Embassy New Delhi": 0,
+    "Regional Passport Office-Mumbai": 0,
+    "Klook Travel Tech Ltd Hong Kong HK": 0,
+    "VANDANA VISA SERVICES": 0,
+    "Consulate General of the Republic of Poland": 0,
+    "Akbar Travel online AG43570": 0,
+    "Just Click N Pay": 0,
+    "IRCTC": 0,
+    "Akbar Travels of India Pvt Ltd - (AG004261)": 0,
+    "Embassy of Gabon": 0,
+    "Go Airlines (India) Limited ( Offline )": 0,
+    "UK VFS": 0,
+    "GO KITE TRAVELS AND TOURS LLP": 0,
     "BTO Bhasin Travels HAP OP7": 0.0184,
     "Bhasin Travel Online HAP 7U63": 0.0184,
+    "Travel super Mall (IXBAIU9800)": 0,
+    "AirIQ Flights series Supplier": 0,
     "AIR IQ": 0.01,
     "Tripjack Flights": 0.005
 }
 
-# ---------------- INPUTS ----------------
-meta_partner = st.selectbox("Meta Partner", ["Wego", "Wego Ads"])
-flight_type = st.selectbox("Flight Type", ["Domestic", "International"])
+# ---------------- INPUT ROW 1 ----------------
+c1, c2, c3 = st.columns(3)
 
-booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
-purchase_amount = st.number_input("Purchase Amount (₹)", min_value=0.0, step=100.0)
-pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
-pax_count = st.number_input("Passenger Count", min_value=1, step=1)
+with c1:
+    meta_partner = st.selectbox("Meta Partner", ["None", "Wego", "Wego Ads"])
 
-supplier_name = st.selectbox(
-    "Supplier Name (type to search)",
-    options=sorted(supplier_di.keys())
-)
+with c2:
+    flight_type = st.selectbox("Flight Type", ["Domestic", "International"])
 
-# ---------------- LOGIC FUNCTIONS ----------------
+with c3:
+    supplier_name = st.selectbox("Supplier Name", sorted(supplier_di.keys()))
+
+# ---------------- INPUT ROW 2 ----------------
+c4, c5, c6, c7 = st.columns(4)
+
+with c4:
+    booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
+
+with c5:
+    purchase_amount = st.number_input("Purchase Amount (₹)", min_value=0.0, step=100.0)
+
+with c6:
+    pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
+
+with c7:
+    pax_count = st.number_input("Pax Count", min_value=1, step=1)
+
+# ---------------- FUNCTIONS ----------------
 def calculate_meta_fee(meta, flight, amount, pax):
-    base_fee = 0
-    ads_fee = 0
+    if meta == "None":
+        return 0, 0, 0
 
     if flight == "Domestic":
         base_fee = 200 if pax <= 2 else 300
     else:
         base_fee = 400 if amount <= 30000 else 600
 
-    total_fee = base_fee
-
-    if meta == "Wego Ads":
-        ads_fee = 120
-        total_fee += ads_fee
+    ads_fee = 120 if meta == "Wego Ads" else 0
+    total_fee = base_fee + ads_fee
 
     return total_fee, base_fee, ads_fee
 
-
-def calculate_di(amount, rate):
-    return round(amount * rate, 2)
-
 # ---------------- CALCULATE ----------------
-if st.button("Calculate"):
+st.markdown("###")
+if st.button("🧮 Calculate"):
     meta_fee, base_fee, ads_fee = calculate_meta_fee(
         meta_partner, flight_type, purchase_amount, pax_count
     )
 
     di_rate = supplier_di.get(supplier_name, 0)
-    di_amount = calculate_di(purchase_amount, di_rate)
+    di_amount = round(purchase_amount * di_rate, 2)
 
-    # 🔹 Purchase & Sale Side
     purchase_side = purchase_amount + meta_fee + pg_fees
     sale_side = booking_amount + di_amount
-
     difference = round(sale_side - purchase_side, 2)
 
     # ---------------- OUTPUT ----------------
     st.divider()
     st.subheader("📊 Calculation Summary")
 
-    st.write(f"**Booking Amount:** ₹ {booking_amount}")
-    st.write(f"**Purchase Amount:** ₹ {purchase_amount}")
-    st.write(f"**PG Fees:** ₹ {pg_fees}")
-
-    st.write("---")
-    st.write(f"**Base Wego Fee:** ₹ {base_fee}")
-    if meta_partner == "Wego Ads":
-        st.write(f"**Wego Ads Fee:** ₹ {ads_fee}")
-    st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
-
-    st.write("---")
     st.write(f"**Supplier:** {supplier_name}")
     st.write(f"**DI %:** {di_rate * 100:.2f}%")
     st.write(f"**DI Amount:** ₹ {di_amount}")
+
+    st.write("---")
+    st.write(f"**Meta Partner:** {meta_partner}")
+    st.write(f"**Base Meta Fee:** ₹ {base_fee}")
+    if meta_partner == "Wego Ads":
+        st.write(f"**Wego Ads Fee:** ₹ {ads_fee}")
+    st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
 
     st.write("---")
     st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
