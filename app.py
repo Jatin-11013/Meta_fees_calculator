@@ -200,8 +200,9 @@ st.markdown(
     </style>
 
     <div class="footer">
-        Auto-updated via GitHub | Last update on 31 Dec
+        Auto-updated via GitHub | Last updated on 31 Dec
     </div>
     """,
     unsafe_allow_html=True
 )
+
