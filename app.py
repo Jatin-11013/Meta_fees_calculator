@@ -54,6 +54,7 @@ supplier_di = {
     "Bhasin Travel Online HAP 7U63": 0.0184,
     "AIR IQ": 0.01,
     "Tripjack Flights": 0.005,
+
     # ZERO DI suppliers
     "Consulate General of Indonesia-Mumbai": 0,
     "RIYA HAP 6A4T": 0,
@@ -113,7 +114,7 @@ with c3:
     supplier_name = st.selectbox("Supplier Name", supplier_list)
 
 # ---------------- INPUT ROW 2 ----------------
-c4, c5, c6, c7 = st.columns(4)
+c4, c5, c6, c7, c8 = st.columns(5)
 
 with c4:
     booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
@@ -125,6 +126,9 @@ with c6:
     pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
 
 with c7:
+    handling_fees = st.number_input("Handling Fees (₹)", min_value=0.0, step=10.0)
+
+with c8:
     pax_count = st.number_input("Pax Count", min_value=1, step=1)
 
 # ---------------- FUNCTIONS ----------------
@@ -145,12 +149,11 @@ if st.button("🧮 Calculate"):
         meta_partner, flight_type, purchase_amount, pax_count
     )
 
-    # DI logic: Other = 0, rest from dict
     di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
     di_amount = round(purchase_amount * di_rate, 2)
 
     purchase_side = purchase_amount + meta_fee + pg_fees
-    sale_side = booking_amount + di_amount
+    sale_side = booking_amount + di_amount + handling_fees
     difference = round(sale_side - purchase_side, 2)
 
     st.divider()
@@ -176,7 +179,7 @@ if st.button("🧮 Calculate"):
     with o3:
         st.markdown("### 💰 Purchase vs Sale")
         st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
-        st.write(f"**Sale Side (Booking + DI):** ₹ {sale_side}")
+        st.write(f"**Sale Side (Booking + DI + Handling):** ₹ {sale_side}")
         st.markdown(f"### 💹 Difference: ₹ {difference}")
 
         if difference < 0:
@@ -205,5 +208,3 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-
