@@ -187,15 +187,16 @@ if st.button("🧮 Calculate"):
     st.subheader("📊 Calculation Summary")
     st.markdown('<div class="summary-box">', unsafe_allow_html=True)
 
-    o1, o2, o3 = st.columns(3)
+    o1, o2, o3, o4 = st.columns(4)
 
+    # ---------- COLUMN 1 : SUPPLIER & DI ----------
     with o1:
         st.markdown("### 🏷 Supplier & DI")
         st.write(f"**Supplier:** {supplier_name}")
         st.write(f"**DI %:** {di_rate * 100:.2f}%")
         st.write(f"**DI Amount:** ₹ {di_amount}")
-        st.write(f"**PLB Amount:** ₹ {plb_amount}")
 
+    # ---------- COLUMN 2 : META FEES ----------
     with o2:
         st.markdown("### 📢 Meta Fees")
         st.write(f"**Meta Partner:** {meta_partner}")
@@ -204,7 +205,14 @@ if st.button("🧮 Calculate"):
             st.write(f"**Ads Fee:** ₹ {ads_fee}")
         st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
 
+    # ---------- COLUMN 3 : PLB ----------
     with o3:
+        st.markdown("### 🎯 PLB")
+        st.write(f"**Base Fare:** ₹ {base_fare}")
+        st.write(f"**PLB Amount:** ₹ {plb_amount}")
+
+    # ---------- COLUMN 4 : PURCHASE VS SALE ----------
+    with o4:
         st.markdown("### 💰 Purchase vs Sale")
         st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
         st.write(f"**Sale Side (Booking + DI + Handling + PLB):** ₹ {sale_side}")
@@ -214,6 +222,7 @@ if st.button("🧮 Calculate"):
             st.error("❌ Loss Booking")
         else:
             st.success("✅ Safe Booking")
+   
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -231,7 +240,7 @@ st.markdown(
     </style>
 
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 10 Jan 2026
+        Auto-updated via GitHub | Last updated on 31 Dec
     </div>
     """,
     unsafe_allow_html=True
