@@ -120,20 +120,21 @@ with c4:
 c5, c6, c7, c8, c9 = st.columns(5)
 
 with c5:
-    booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
-
+    base_fare = st.number_input("Base Fare (₹)", min_value=0.0, step=100.0)
+    
 with c6:
     purchase_amount = st.number_input("Purchase Amount (₹)", min_value=0.0, step=100.0)
 
 with c7:
-    pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
-
+    booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
+    
 with c8:
     handling_fees = st.number_input("Handling Fees (₹)", min_value=0.0, step=10.0)
 
 # 🔹 NEW INPUT (BASE FARE)
 with c9:
-    base_fare = st.number_input("Base Fare (₹)", min_value=0.0, step=100.0)
+    pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
+    
 
 
 
