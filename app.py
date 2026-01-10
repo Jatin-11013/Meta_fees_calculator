@@ -210,8 +210,8 @@ if st.button("🧮 Calculate"):
         st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
 
     # ---------- COLUMN 3 : PLB ----------
-    with o3:
-    st.markdown("### 🎯 PLB")
+   with o3:
+       st.markdown("### 🎯 PLB")
 
     plb_percent_text = "0%"
 
