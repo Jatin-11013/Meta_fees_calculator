@@ -114,7 +114,7 @@ with c3:
     supplier_name = st.selectbox("Supplier Name", supplier_list)
 
 # ---------------- INPUT ROW 2 ----------------
-c4, c5, c6, c7, c8 = st.columns(5)
+c4, c5, c6, c7, c8, c9 = st.columns(6)
 
 with c4:
     booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
@@ -128,7 +128,11 @@ with c6:
 with c7:
     handling_fees = st.number_input("Handling Fees (₹)", min_value=0.0, step=10.0)
 
+# 🔹 NEW INPUT (BASE FARE)
 with c8:
+    base_fare = st.number_input("Base Fare (₹)", min_value=0.0, step=100.0)
+
+with c9:
     pax_count = st.number_input("Pax Count", min_value=1, step=1)
 
 # ---------------- FUNCTIONS ----------------
@@ -152,8 +156,31 @@ if st.button("🧮 Calculate"):
     di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
     di_amount = round(purchase_amount * di_rate, 2)
 
+    # 🔹 PLB CALCULATION (NEW)
+    plb_amount = 0
+
+    if supplier_name in [
+        "Indigo Corporate Travelport Universal Api (KTBOM278)",
+        "Indigo Regular Fare (Corporate)(KTBOM278)"
+    ]:
+        if flight_type == "Domestic":
+            plb_amount = base_fare * 0.0075
+        else:
+            plb_amount = base_fare * 0.015
+
+    if supplier_name in [
+        "Indigo Regular Corp Chandni (14354255C)",
+        "Indigo Retail Chandni (14354255C)"
+    ]:
+        if flight_type == "Domestic":
+            plb_amount = base_fare * 0.0125
+        else:
+            plb_amount = base_fare * 0.0185
+
+    plb_amount = round(plb_amount, 2)
+
     purchase_side = purchase_amount + meta_fee + pg_fees
-    sale_side = booking_amount + di_amount + handling_fees
+    sale_side = booking_amount + di_amount + handling_fees + plb_amount
     difference = round(sale_side - purchase_side, 2)
 
     st.divider()
@@ -167,6 +194,7 @@ if st.button("🧮 Calculate"):
         st.write(f"**Supplier:** {supplier_name}")
         st.write(f"**DI %:** {di_rate * 100:.2f}%")
         st.write(f"**DI Amount:** ₹ {di_amount}")
+        st.write(f"**PLB Amount:** ₹ {plb_amount}")
 
     with o2:
         st.markdown("### 📢 Meta Fees")
@@ -179,7 +207,7 @@ if st.button("🧮 Calculate"):
     with o3:
         st.markdown("### 💰 Purchase vs Sale")
         st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
-        st.write(f"**Sale Side (Booking + DI + Handling):** ₹ {sale_side}")
+        st.write(f"**Sale Side (Booking + DI + Handling + PLB):** ₹ {sale_side}")
         st.markdown(f"### 💹 Difference: ₹ {difference}")
 
         if difference < 0:
@@ -203,7 +231,7 @@ st.markdown(
     </style>
 
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 31 Dec
+        Auto-updated via GitHub | Last updated on 10 Jan 2026
     </div>
     """,
     unsafe_allow_html=True
