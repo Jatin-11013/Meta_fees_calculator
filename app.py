@@ -212,24 +212,26 @@ if st.button("🧮 Calculate"):
     # ---------- COLUMN 3 : PLB ----------
    with o3:
        st.markdown("### 🎯 PLB")
-
-    plb_percent_text = "0%"
-
-    if supplier_name in [
+       plb_percent_text = "0%"
+       if supplier_name in [
         "Indigo Corporate Travelport Universal Api (KTBOM278)",
         "Indigo Regular Fare (Corporate)(KTBOM278)"
     ]:
-        plb_percent_text = "0.75%" if flight_type == "Domestic" else "1.50%"
+           plb_percent_text = "0.75%" if flight_type == "Domestic" else "1.50%"
 
-    elif supplier_name in [
+        elif supplier_name in [
         "Indigo Regular Corp Chandni (14354255C)",
         "Indigo Retail Chandni (14354255C)"
     ]:
-        plb_percent_text = "1.25%" if flight_type == "Domestic" else "1.85%"
+            plb_percent_text = "1.25%" if flight_type == "Domestic" else "1.85%"
 
     st.write(f"**Base Fare:** ₹ {base_fare}")
     st.write(f"**PLB % Applied:** {plb_percent_text}")
     st.write(f"**PLB Amount:** ₹ {plb_amount}")
+
+
+
+
 
     # ---------- COLUMN 4 : PURCHASE VS SALE ----------
     with o4:
