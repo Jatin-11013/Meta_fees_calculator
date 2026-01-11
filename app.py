@@ -136,6 +136,7 @@ if not st.session_state.logged_in:
             st.session_state.logged_in = True
             st.session_state.username = username_input
             st.success(f"Welcome {username_input}")
+            st.experimental_rerun()  # App reload after login
         else:
             st.error("Invalid credentials")
             st.stop()  # invalid credentials par hi stop
@@ -145,10 +146,13 @@ if st.session_state.logged_in:
     top_left, top_right = st.columns([8, 2])
     with top_right:
         if st.button("🔙 Back"):
+            # Reset session variables
             st.session_state.logged_in = False
             st.session_state.username = ""
             st.session_state.otp_verified = False
+            # Rerun app to go back to login page
             st.experimental_rerun()
+            st.stop()  # <- prevents further code execution
 
 # ---------------- SIDEBAR ----------------
 if st.session_state.logged_in:
@@ -157,6 +161,7 @@ if st.session_state.logged_in:
         st.session_state.logged_in = False
         st.session_state.username = ""
         st.experimental_rerun()
+        st.stop()
     if st.sidebar.button("View Logs"):
         show_logs()
         st.stop()
