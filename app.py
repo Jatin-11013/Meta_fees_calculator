@@ -34,7 +34,7 @@ creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"],
 gc = gspread.authorize(creds)
 
 # <-- Paste your Google Sheet ID here -->
-SHEET_ID = "1gzbcl7nT77Kk42UzCw-RwV5DpJqRRyGQFHQSyp1XC_Q/edit?gid=755575219#gid=755575219"
+SHEET_ID = "1gzbcl7nT77Kk42UzCw-RwV5DpJqRRyGQFHQSyp1XC_Q"
 sh = gc.open_by_key(SHEET_ID)
 LOGS_TAB = "Logs"
 USERS_TAB = "Users"
@@ -386,3 +386,4 @@ if st.session_state.logged_in and not st.session_state.viewing_logs:
         show_logs()
 
 st.markdown('<div class="footer">Auto-updated via GitHub | Last updated on 11 Jan 2026</div>', unsafe_allow_html=True)
+
