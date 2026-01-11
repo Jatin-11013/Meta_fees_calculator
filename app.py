@@ -39,6 +39,10 @@ sh = gc.open_by_key(SHEET_ID)
 LOGS_TAB = "Logs"
 USERS_TAB = "Users"
 
+# ---------------- HARD-CODED ADMIN ----------------
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "admin@123"
+
 # ---------------- FUNCTIONS ----------------
 def hash_password(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
@@ -48,7 +52,7 @@ def generate_otp():
 
 def send_otp_email(email, otp_code):
     sender_email = "jatinjr11013@gmail.com"           # <--- CHANGE THIS
-    sender_pass = "zier gnxf snkr repo"           # <--- CHANGE THIS
+    sender_pass = "zier gnxf snkr repo"              # <--- CHANGE THIS
     msg = EmailMessage()
     msg.set_content(f"Your OTP for password change is: {otp_code}")
     msg['Subject'] = "Booking Calculator OTP Verification"
@@ -99,6 +103,21 @@ def update_user_password(username, new_hashed_pw):
             worksheet.update_cell(idx+2, 2, new_hashed_pw)
             worksheet.update_cell(idx+2, 6, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))  # Last Login
             break
+
+def add_user(username, password, email, role="User"):
+    worksheet = sh.worksheet(USERS_TAB)
+    hashed_pw = hash_password(password)
+    created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    worksheet.append_row([
+        username,
+        hashed_pw,
+        email,
+        role,
+        created_at,
+        "",
+        "",
+        "False"
+    ])
 
 # ---------------- LOGS HANDLING ----------------
 def log_calculation(username, data_dict):
@@ -159,21 +178,32 @@ users = get_users()
 # ---------------- LOGIN ----------------
 if not st.session_state.logged_in and not st.session_state.viewing_logs:
     st.subheader("🔐 Login")
+
     username_input = st.text_input("Username")
     password_input = st.text_input("Password", type="password")
+
     if st.button("Login"):
-        if username_input in users and hash_password(password_input) == users[username_input][0]:
+
+        # 🔐 ADMIN LOGIN (HARDCODED)
+        if username_input == ADMIN_USERNAME and password_input == ADMIN_PASSWORD:
+            st.session_state.logged_in = True
+            st.session_state.username = "Admin"
+            st.session_state.admin_panel = True
+            st.success("Welcome Admin")
+            st.experimental_rerun()
+
+        # 👤 NORMAL USER LOGIN (GOOGLE SHEET)
+        elif username_input in users and hash_password(password_input) == users[username_input][0]:
             st.session_state.logged_in = True
             st.session_state.username = username_input
-            update_user_password(username_input, users[username_input][0])  # Update last login
+            st.session_state.admin_panel = False
+            update_user_password(username_input, users[username_input][0])
             st.success(f"Welcome {username_input}")
             st.experimental_rerun()
+
         else:
             st.error("Invalid credentials")
-    st.markdown("Forgot Password? Click below")
-    if st.button("Forgot Password"):
-        st.session_state.back = "forgot"
-        st.experimental_rerun()
+
     st.stop()
 
 # ---------------- FORGOT PASSWORD ----------------
@@ -221,6 +251,25 @@ if st.session_state.logged_in and not st.session_state.viewing_logs:
     st.title("🧮 Booking Safety Calculator")
     st.caption("Operation Team – Safe vs Loss Booking Tool")
     
+    # ---------------- ADMIN PANEL ----------------
+    if st.session_state.admin_panel:
+        st.subheader("🛠 Admin Panel – Add User")
+
+        new_user = st.text_input("New Username")
+        new_email = st.text_input("Email")
+        new_password = st.text_input("Password", type="password")
+        new_role = st.selectbox("Role", ["User", "Admin"])
+
+        if st.button("➕ Add User"):
+            if new_user and new_password and new_email:
+                add_user(new_user, new_password, new_email, new_role)
+                st.success("User added successfully")
+                st.experimental_rerun()
+            else:
+                st.error("All fields are required")
+
+        st.divider()
+
     # ---------------- DI MASTER ----------------
     supplier_di = {
         "TBO Flights Online - BOMA774": 0.01,
@@ -386,6 +435,3 @@ if st.session_state.logged_in and not st.session_state.viewing_logs:
         show_logs()
 
 st.markdown('<div class="footer">Auto-updated via GitHub | Last updated on 11 Jan 2026</div>', unsafe_allow_html=True)
-
-
-
