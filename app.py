@@ -14,11 +14,11 @@ st.set_page_config(
     layout="wide"
 )
 
-# -------- APP-WIDE CSS --------
+# ---------------- CSS ----------------
 st.markdown(
     """
     <style>
-    /* Increase top padding so headings are not cut off */
+    /* Top padding so headings not cut off */
     .block-container { padding-top: 3rem; }
 
     .summary-box p { font-size: 12px; margin-bottom: 3px; }
@@ -37,7 +37,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ---------------- SESSION MANAGEMENT ----------------
+# ---------------- SESSION STATE ----------------
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 if "username" not in st.session_state:
@@ -131,28 +131,29 @@ if not st.session_state.logged_in:
     st.subheader("🔐 Login")
     username_input = st.text_input("Username")
     password_input = st.text_input("Password", type="password")
-    if st.button("Login"):
+    login_clicked = st.button("Login")
+
+    if login_clicked:
         if username_input in users and hash_password(password_input) == users[username_input][0]:
             st.session_state.logged_in = True
             st.session_state.username = username_input
             st.success(f"Welcome {username_input}")
-            st.experimental_rerun()  # App reload after login
+            st.experimental_rerun()  # Safe rerun after login
+            st.stop()  # Must stop here
         else:
             st.error("Invalid credentials")
-            st.stop()  # invalid credentials par hi stop
+            st.stop()
 
 # ---------------- TOP-BAR BACK BUTTON ----------------
 if st.session_state.logged_in:
     top_left, top_right = st.columns([8, 2])
     with top_right:
         if st.button("🔙 Back"):
-            # Reset session variables
             st.session_state.logged_in = False
             st.session_state.username = ""
             st.session_state.otp_verified = False
-            # Rerun app to go back to login page
             st.experimental_rerun()
-            st.stop()  # <- prevents further code execution
+            st.stop()
 
 # ---------------- SIDEBAR ----------------
 if st.session_state.logged_in:
@@ -191,7 +192,6 @@ if st.session_state.logged_in:
     st.title("🧮 Booking Safety Calculator")
     st.caption("Operation Team – Safe vs Loss Booking Tool")
 
-    # Supplier DI Master
     supplier_di = {
         "TBO Flights Online - BOMA774": 0.01,
         "FlyShop Series Online API": 0.01,
@@ -202,7 +202,6 @@ if st.session_state.logged_in:
     supplier_list = sorted(supplier_di.keys())
     supplier_list.insert(0, "Other")
 
-    # Input rows
     c1, c2, c3, c4 = st.columns(4)
     with c1: meta_partner = st.selectbox("Meta Partner", ["None", "Wego", "Wego Ads"])
     with c2: flight_type = st.selectbox("Flight Type", ["Domestic", "International"])
@@ -223,7 +222,6 @@ if st.session_state.logged_in:
         ads_fee = 120 if meta == "Wego Ads" else 0
         return base_fee + ads_fee, base_fee, ads_fee
 
-    st.markdown("###")
     if st.button("🧮 Calculate"):
         meta_fee, base_fee_calc, ads_fee = calculate_meta_fee(meta_partner, flight_type, purchase_amount, pax_count)
         di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
@@ -236,7 +234,6 @@ if st.session_state.logged_in:
         difference = round(sale_side - purchase_side, 2)
         result_text = "Safe" if difference >=0 else "Loss"
 
-        # Logging
         log_calculation(st.session_state.username, {
             "Supplier": supplier_name,
             "Flight Type": flight_type,
@@ -249,7 +246,6 @@ if st.session_state.logged_in:
             "Result": result_text
         })
 
-        # Display
         st.divider()
         st.subheader("📊 Calculation Summary")
         st.markdown('<div class="summary-box">', unsafe_allow_html=True)
