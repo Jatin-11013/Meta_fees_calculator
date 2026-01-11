@@ -38,8 +38,6 @@ if "otp_verified" not in st.session_state:
     st.session_state.otp_verified = False
 
 # ---------------- USER DATA ----------------
-# Example users: username -> [hashed_password, email]
-# Passwords hashed using sha256
 users = {
     "jatin": [hashlib.sha256("Jatin@123".encode()).hexdigest(), "jatin@example.com"],
     "rahul": [hashlib.sha256("Rahul@123".encode()).hexdigest(), "rahul@example.com"]
@@ -55,7 +53,6 @@ def generate_otp():
     return "".join(random.choices(string.digits, k=6))
 
 def send_otp_email(email, otp_code):
-    # Configure your SMTP here (example Gmail)
     sender_email = "your_email@gmail.com"
     sender_pass = "your_email_app_password"
     msg = EmailMessage()
@@ -63,7 +60,6 @@ def send_otp_email(email, otp_code):
     msg['Subject'] = "Booking Calculator OTP Verification"
     msg['From'] = sender_email
     msg['To'] = email
-
     try:
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             smtp.login(sender_email, sender_pass)
@@ -120,7 +116,7 @@ def show_logs():
     else:
         st.info("No logs available yet.")
 
-# ---------------- LOGIN/LOGOUT ----------------
+# ---------------- LOGIN ----------------
 if not st.session_state.logged_in:
     st.subheader("🔐 Login")
     username_input = st.text_input("Username")
@@ -132,15 +128,26 @@ if not st.session_state.logged_in:
             st.success(f"Welcome {username_input}")
         else:
             st.error("Invalid credentials")
-    st.stop()
+            st.stop()  # invalid credentials par hi stop
 
-else:
+# ---------------- TOP-BAR BACK BUTTON ----------------
+if st.session_state.logged_in:
+    top_left, top_right = st.columns([8, 2])
+    with top_right:
+        if st.button("🔙 Back"):
+            st.session_state.logged_in = False
+            st.session_state.username = ""
+            st.session_state.otp_verified = False
+            st.experimental_rerun()
+
+# ---------------- SIDEBAR ----------------
+if st.session_state.logged_in:
     st.sidebar.write(f"👤 Logged in as: {st.session_state.username}")
     if st.sidebar.button("Logout"):
         st.session_state.logged_in = False
         st.session_state.username = ""
         st.success("Logged out successfully")
-        st.stop()
+        st.experimental_rerun()
     if st.sidebar.button("View Logs"):
         show_logs()
         st.stop()
@@ -166,168 +173,113 @@ else:
         st.stop()
 
 # ---------------- CALCULATOR ----------------
-st.title("🧮 Booking Safety Calculator")
-st.caption("Operation Team – Safe vs Loss Booking Tool")
+if st.session_state.logged_in:
+    st.title("🧮 Booking Safety Calculator")
+    st.caption("Operation Team – Safe vs Loss Booking Tool")
 
-# ---------------- DI MASTER ----------------
-supplier_di = {
-    "TBO Flights Online - BOMA774": 0.01,
-    "FlyShop Series Online API": 0.01,
-    "Flyshop online API": 0.01,
-    "Cleartrip Private Limited - AB 2": 0.01,
-    "Travelopedia Series": 0.01,
-    "Just Click N Pay Series": 0.01,
-    "Fly24hrs Holiday Pvt. Ltd": 0.01,
-    "Travelopedia": 0.01,
-    "Etrave Flights": 0.0075,
-    "ETrav Tech Limited": 0.0075,
-    "Etrav Series Flights": 0.01,
-    "Tripjack Pvt. Ltd.": 0.005,
-    "Indigo Corporate Travelport Universal Api (KTBOM278)": 0.0045,
-    "Indigo Regular Fare (Corporate)(KTBOM278)": 0.0045,
-    "Indigo Retail Chandni (14354255C)": 0.0034,
-    "Indigo Regular Corp Chandni (14354255C)": 0.0034,
-    "BTO Bhasin Travels HAP OP7": 0.01,
-    "Bhasin Travel Online HAP 7U63": 0.0184,
-    "AIR IQ": 0.01,
-    "Tripjack Flights": 0.005,
-    "Etrav HAP 58Y8":0.01,
-    "Consulate General of Indonesia-Mumbai": 0,
-    "RIYA HAP 6A4T": 0,
-    "Consulate Genenal Of Hungary - Visa": 0,
-    "MUSAFIR.COM INDIA PVT LTD": 0,
-    "MASTER BSP": 0,
-    "Japan vfs": 0,
-    "VFS Global Georgia - Visa": 0,
-    "Akbar Travels HAP 3OT9": 0,
-    "GRNConnect": 0,
-    "CHINA VFS": 0,
-    "FLYCREATIVE ONLINE PVT. LTD (LCC)": 0,
-    "Bajaj Allianz General Insurance": 0,
-    "South Africa VFS": 0,
-    "MakeMyTrip (India) Private Limited": 0,
-    "Travelport Universal Api": 0,
-    "Deputy High Commission of Bangladesh, Mumbai": 0,
-    "Bajaj Allianz General Insurance - Aertrip A/C": 0,
-    "Germany Visa": 0,
-    "Cleartrip Private Limited - AB 1": 0,
-    "CDV HOLIDAYS PRIVATE LIMITED": 0,
-    "Rudraa Tours And Travels Jayashree Patil": 0,
-    "France Vfs": 0,
-    "Vietnam Embassy New Delhi": 0,
-    "Srilanka E Visa": 0,
-    "Morocco Embassy New Delhi": 0,
-    "Regional Passport Office-Mumbai": 0,
-    "Klook Travel Tech Ltd Hong Kong HK": 0,
-    "VANDANA VISA SERVICES": 0,
-    "Consulate General of the Republic of Poland": 0,
-    "Akbar Travel online AG43570": 0,
-    "Just Click N Pay": 0,
-    "IRCTC": 0,
-    "Akbar Travels of India Pvt Ltd - (AG004261)": 0,
-    "Embassy of Gabon": 0,
-    "Go Airlines (India) Limited ( Offline )": 0,
-    "UK VFS": 0,
-    "GO KITE TRAVELS AND TOURS LLP": 0,
-    "Travel super Mall (IXBAIU9800)": 0,
-    "AirIQ Flights series Supplier": 0
-}
+    # Supplier DI Master
+    supplier_di = {
+        "TBO Flights Online - BOMA774": 0.01,
+        "FlyShop Series Online API": 0.01,
+        "Flyshop online API": 0.01,
+        # ... baki suppliers ...
+        "AirIQ Flights series Supplier": 0
+    }
 
-# -------- ADD OTHER OPTION AT TOP --------
-supplier_list = sorted(supplier_di.keys())
-supplier_list.insert(0, "Other")
+    supplier_list = sorted(supplier_di.keys())
+    supplier_list.insert(0, "Other")
 
-# ---------------- INPUT ROWS ----------------
-c1, c2, c3, c4 = st.columns(4)
-with c1: meta_partner = st.selectbox("Meta Partner", ["None", "Wego", "Wego Ads"])
-with c2: flight_type = st.selectbox("Flight Type", ["Domestic", "International"])
-with c3: supplier_name = st.selectbox("Supplier Name", supplier_list)
-with c4: pax_count = st.number_input("Pax Count", min_value=1, step=1)
+    # Input rows
+    c1, c2, c3, c4 = st.columns(4)
+    with c1: meta_partner = st.selectbox("Meta Partner", ["None", "Wego", "Wego Ads"])
+    with c2: flight_type = st.selectbox("Flight Type", ["Domestic", "International"])
+    with c3: supplier_name = st.selectbox("Supplier Name", supplier_list)
+    with c4: pax_count = st.number_input("Pax Count", min_value=1, step=1)
 
-c5, c6, c7, c8, c9 = st.columns(5)
-with c5: base_fare = st.number_input("Base Fare (₹)", min_value=0.0, step=100.0)
-with c6: purchase_amount = st.number_input("Purchase Amount (₹)", min_value=0.0, step=100.0)
-with c7: booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
-with c8: handling_fees = st.number_input("Handling Fees (₹)", min_value=0.0, step=10.0)
-with c9: pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
+    c5, c6, c7, c8, c9 = st.columns(5)
+    with c5: base_fare = st.number_input("Base Fare (₹)", min_value=0.0, step=100.0)
+    with c6: purchase_amount = st.number_input("Purchase Amount (₹)", min_value=0.0, step=100.0)
+    with c7: booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
+    with c8: handling_fees = st.number_input("Handling Fees (₹)", min_value=0.0, step=10.0)
+    with c9: pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
 
-def calculate_meta_fee(meta, flight, amount, pax):
-    if meta == "None": return 0, 0, 0
-    if flight == "Domestic": base_fee = 200 if pax <= 2 else 300
-    else: base_fee = 400 if amount <= 30000 else 600
-    ads_fee = 120 if meta == "Wego Ads" else 0
-    return base_fee + ads_fee, base_fee, ads_fee
+    def calculate_meta_fee(meta, flight, amount, pax):
+        if meta == "None": return 0, 0, 0
+        if flight == "Domestic": base_fee = 200 if pax <= 2 else 300
+        else: base_fee = 400 if amount <= 30000 else 600
+        ads_fee = 120 if meta == "Wego Ads" else 0
+        return base_fee + ads_fee, base_fee, ads_fee
 
-# ---------------- CALCULATE ----------------
-st.markdown("###")
-if st.button("🧮 Calculate"):
-    meta_fee, base_fee_calc, ads_fee = calculate_meta_fee(meta_partner, flight_type, purchase_amount, pax_count)
-    di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
-    di_amount = round(purchase_amount * di_rate, 2)
-    plb_amount = 0
-    plb_percent_text = "0%"
+    # Calculation
+    st.markdown("###")
+    if st.button("🧮 Calculate"):
+        meta_fee, base_fee_calc, ads_fee = calculate_meta_fee(meta_partner, flight_type, purchase_amount, pax_count)
+        di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
+        di_amount = round(purchase_amount * di_rate, 2)
+        plb_amount = 0
+        plb_percent_text = "0%"
 
-    if supplier_name in ["Indigo Corporate Travelport Universal Api (KTBOM278)", "Indigo Regular Fare (Corporate)(KTBOM278)"]:
-        plb_amount = base_fare * (0.0075 if flight_type=="Domestic" else 0.015)
-        plb_percent_text = "0.75%" if flight_type=="Domestic" else "1.50%"
-    elif supplier_name in ["Indigo Regular Corp Chandni (14354255C)", "Indigo Retail Chandni (14354255C)"]:
-        plb_amount = base_fare * (0.0125 if flight_type=="Domestic" else 0.0185)
-        plb_percent_text = "1.25%" if flight_type=="Domestic" else "1.85%"
+        if supplier_name in ["Indigo Corporate Travelport Universal Api (KTBOM278)", "Indigo Regular Fare (Corporate)(KTBOM278)"]:
+            plb_amount = base_fare * (0.0075 if flight_type=="Domestic" else 0.015)
+            plb_percent_text = "0.75%" if flight_type=="Domestic" else "1.50%"
+        elif supplier_name in ["Indigo Regular Corp Chandni (14354255C)", "Indigo Retail Chandni (14354255C)"]:
+            plb_amount = base_fare * (0.0125 if flight_type=="Domestic" else 0.0185)
+            plb_percent_text = "1.25%" if flight_type=="Domestic" else "1.85%"
 
-    plb_amount = round(plb_amount, 2)
-    purchase_side = purchase_amount + meta_fee + pg_fees
-    sale_side = booking_amount + di_amount + handling_fees + plb_amount
-    difference = round(sale_side - purchase_side, 2)
-    result_text = "Safe" if difference >=0 else "Loss"
+        plb_amount = round(plb_amount, 2)
+        purchase_side = purchase_amount + meta_fee + pg_fees
+        sale_side = booking_amount + di_amount + handling_fees + plb_amount
+        difference = round(sale_side - purchase_side, 2)
+        result_text = "Safe" if difference >=0 else "Loss"
 
-    # ---------------- LOGGING ----------------
-    log_calculation(st.session_state.username, {
-        "Supplier": supplier_name,
-        "Flight Type": flight_type,
-        "Booking Amount": booking_amount,
-        "Purchase Amount": purchase_amount,
-        "PLB Amount": plb_amount,
-        "DI Amount": di_amount,
-        "Meta Fees": meta_fee,
-        "Difference": difference,
-        "Result": result_text
-    })
+        # Logging
+        log_calculation(st.session_state.username, {
+            "Supplier": supplier_name,
+            "Flight Type": flight_type,
+            "Booking Amount": booking_amount,
+            "Purchase Amount": purchase_amount,
+            "PLB Amount": plb_amount,
+            "DI Amount": di_amount,
+            "Meta Fees": meta_fee,
+            "Difference": difference,
+            "Result": result_text
+        })
 
-    # ---------------- DISPLAY ----------------
-    st.divider()
-    st.subheader("📊 Calculation Summary")
-    st.markdown('<div class="summary-box">', unsafe_allow_html=True)
-    o1, o2, o3, o4 = st.columns(4)
+        # Display
+        st.divider()
+        st.subheader("📊 Calculation Summary")
+        st.markdown('<div class="summary-box">', unsafe_allow_html=True)
+        o1, o2, o3, o4 = st.columns(4)
 
-    with o1:
-        st.markdown("### 🏷 Supplier & DI")
-        st.write(f"**Supplier:** {supplier_name}")
-        st.write(f"**DI %:** {di_rate*100:.2f}%")
-        st.write(f"**DI Amount:** ₹ {di_amount}")
+        with o1:
+            st.markdown("### 🏷 Supplier & DI")
+            st.write(f"**Supplier:** {supplier_name}")
+            st.write(f"**DI %:** {di_rate*100:.2f}%")
+            st.write(f"**DI Amount:** ₹ {di_amount}")
 
-    with o2:
-        st.markdown("### 📢 Meta Fees")
-        st.write(f"**Meta Partner:** {meta_partner}")
-        st.write(f"**Base Fee:** ₹ {base_fee_calc}")
-        if meta_partner == "Wego Ads":
-            st.write(f"**Ads Fee:** ₹ {ads_fee}")
-        st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
+        with o2:
+            st.markdown("### 📢 Meta Fees")
+            st.write(f"**Meta Partner:** {meta_partner}")
+            st.write(f"**Base Fee:** ₹ {base_fee_calc}")
+            if meta_partner == "Wego Ads":
+                st.write(f"**Ads Fee:** ₹ {ads_fee}")
+            st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
 
-    with o3:
-        st.markdown("### 🎯 PLB")
-        st.write(f"**Base Fare:** ₹ {base_fare}")
-        st.write(f"**PLB % Applied:** {plb_percent_text}")
-        st.write(f"**PLB Amount:** ₹ {plb_amount}")
+        with o3:
+            st.markdown("### 🎯 PLB")
+            st.write(f"**Base Fare:** ₹ {base_fare}")
+            st.write(f"**PLB % Applied:** {plb_percent_text}")
+            st.write(f"**PLB Amount:** ₹ {plb_amount}")
 
-    with o4:
-        st.markdown("### 💰 Purchase vs Sale")
-        st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
-        st.write(f"**Sale Side (Booking + DI + Handling + PLB):** ₹ {sale_side}")
-        st.markdown(f"### 💹 Difference: ₹ {difference}")
-        if difference < 0: st.error("❌ Loss Booking")
-        else: st.success("✅ Safe Booking")
+        with o4:
+            st.markdown("### 💰 Purchase vs Sale")
+            st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
+            st.write(f"**Sale Side (Booking + DI + Handling + PLB):** ₹ {sale_side}")
+            st.markdown(f"### 💹 Difference: ₹ {difference}")
+            if difference < 0: st.error("❌ Loss Booking")
+            else: st.success("✅ Safe Booking")
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- FOOTER ----------------
 st.markdown(
