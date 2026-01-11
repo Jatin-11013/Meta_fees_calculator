@@ -54,7 +54,7 @@ supplier_di = {
     "Bhasin Travel Online HAP 7U63": 0.0184,
     "AIR IQ": 0.01,
     "Tripjack Flights": 0.005,
-    "Etrav HAP 58Y8":0.01,
+    "Etrav HAP 58Y8": 0.01,
 
     # ZERO DI suppliers
     "Consulate General of Indonesia-Mumbai": 0,
@@ -122,22 +122,18 @@ c5, c6, c7, c8, c9 = st.columns(5)
 
 with c5:
     base_fare = st.number_input("Base Fare (₹)", min_value=0.0, step=100.0)
-    
+
 with c6:
     purchase_amount = st.number_input("Purchase Amount (₹)", min_value=0.0, step=100.0)
 
 with c7:
     booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
-    
+
 with c8:
     handling_fees = st.number_input("Handling Fees (₹)", min_value=0.0, step=10.0)
 
-# 🔹 NEW INPUT (BASE FARE)
 with c9:
     pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
-    
-
-
 
 # ---------------- FUNCTIONS ----------------
 def calculate_meta_fee(meta, flight, amount, pax):
@@ -160,26 +156,19 @@ if st.button("🧮 Calculate"):
     di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
     di_amount = round(purchase_amount * di_rate, 2)
 
-    # 🔹 PLB CALCULATION (NEW)
     plb_amount = 0
 
     if supplier_name in [
         "Indigo Corporate Travelport Universal Api (KTBOM278)",
         "Indigo Regular Fare (Corporate)(KTBOM278)"
     ]:
-        if flight_type == "Domestic":
-            plb_amount = base_fare * 0.0075
-        else:
-            plb_amount = base_fare * 0.015
+        plb_amount = base_fare * (0.0075 if flight_type == "Domestic" else 0.015)
 
-    if supplier_name in [
+    elif supplier_name in [
         "Indigo Regular Corp Chandni (14354255C)",
         "Indigo Retail Chandni (14354255C)"
     ]:
-        if flight_type == "Domestic":
-            plb_amount = base_fare * 0.0125
-        else:
-            plb_amount = base_fare * 0.0185
+        plb_amount = base_fare * (0.0125 if flight_type == "Domestic" else 0.0185)
 
     plb_amount = round(plb_amount, 2)
 
@@ -193,14 +182,12 @@ if st.button("🧮 Calculate"):
 
     o1, o2, o3, o4 = st.columns(4)
 
-    # ---------- COLUMN 1 : SUPPLIER & DI ----------
     with o1:
         st.markdown("### 🏷 Supplier & DI")
         st.write(f"**Supplier:** {supplier_name}")
         st.write(f"**DI %:** {di_rate * 100:.2f}%")
         st.write(f"**DI Amount:** ₹ {di_amount}")
 
-    # ---------- COLUMN 2 : META FEES ----------
     with o2:
         st.markdown("### 📢 Meta Fees")
         st.write(f"**Meta Partner:** {meta_partner}")
@@ -209,31 +196,26 @@ if st.button("🧮 Calculate"):
             st.write(f"**Ads Fee:** ₹ {ads_fee}")
         st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
 
-    # ---------- COLUMN 3 : PLB ----------
-   with o3:
-       st.markdown("### 🎯 PLB")
-       plb_percent_text = "0%"
-       if supplier_name in [
-        "Indigo Corporate Travelport Universal Api (KTBOM278)",
-        "Indigo Regular Fare (Corporate)(KTBOM278)"
-    ]:
-           plb_percent_text = "0.75%" if flight_type == "Domestic" else "1.50%"
+    with o3:
+        st.markdown("### 🎯 PLB")
+        plb_percent_text = "0%"
+
+        if supplier_name in [
+            "Indigo Corporate Travelport Universal Api (KTBOM278)",
+            "Indigo Regular Fare (Corporate)(KTBOM278)"
+        ]:
+            plb_percent_text = "0.75%" if flight_type == "Domestic" else "1.50%"
 
         elif supplier_name in [
-        "Indigo Regular Corp Chandni (14354255C)",
-        "Indigo Retail Chandni (14354255C)"
-    ]:
+            "Indigo Regular Corp Chandni (14354255C)",
+            "Indigo Retail Chandni (14354255C)"
+        ]:
             plb_percent_text = "1.25%" if flight_type == "Domestic" else "1.85%"
 
-    st.write(f"**Base Fare:** ₹ {base_fare}")
-    st.write(f"**PLB % Applied:** {plb_percent_text}")
-    st.write(f"**PLB Amount:** ₹ {plb_amount}")
+        st.write(f"**Base Fare:** ₹ {base_fare}")
+        st.write(f"**PLB % Applied:** {plb_percent_text}")
+        st.write(f"**PLB Amount:** ₹ {plb_amount}")
 
-
-
-
-
-    # ---------- COLUMN 4 : PURCHASE VS SALE ----------
     with o4:
         st.markdown("### 💰 Purchase vs Sale")
         st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
@@ -244,7 +226,6 @@ if st.button("🧮 Calculate"):
             st.error("❌ Loss Booking")
         else:
             st.success("✅ Safe Booking")
-   
 
     st.markdown('</div>', unsafe_allow_html=True)
 
