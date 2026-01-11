@@ -70,8 +70,8 @@ def initialize_users():
         worksheet = sh.worksheet(USERS_TAB)
         all_users = worksheet.get_all_records()
         if len(all_users)==0:
-            default_username = "Jatin"
-            default_password = hash_password("123")
+            default_username = "Jatin Yadav"
+            default_password = hash_password("jatin@123")
             default_email = "jatinjr11013@gmail.com"
             created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             worksheet.append_row([default_username, default_password, default_email, "Admin", created_at, "", "", "False"])
@@ -386,5 +386,6 @@ if st.session_state.logged_in and not st.session_state.viewing_logs:
         show_logs()
 
 st.markdown('<div class="footer">Auto-updated via GitHub | Last updated on 11 Jan 2026</div>', unsafe_allow_html=True)
+
 
 
