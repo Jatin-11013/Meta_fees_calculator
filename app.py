@@ -14,14 +14,24 @@ st.set_page_config(
     layout="wide"
 )
 
-# -------- REMOVE EXTRA TOP SPACE & SMALLER FONTS --------
+# -------- APP-WIDE CSS --------
 st.markdown(
     """
     <style>
-    .block-container { padding-top: 1rem; }
+    /* Increase top padding so headings are not cut off */
+    .block-container { padding-top: 3rem; }
+
     .summary-box p { font-size: 12px; margin-bottom: 3px; }
     .summary-box h3 { font-size: 14px; margin-bottom: 5px; }
     .stSelectbox label, .stNumberInput label { font-size: 13px; }
+
+    .footer {
+        position: fixed;
+        left: 10px;
+        bottom: 10px;
+        color: #6c757d;
+        font-size: 12px;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -94,8 +104,8 @@ def show_logs():
         selected_result = st.selectbox("Filter by Result", results_filter)
         selected_supplier = st.selectbox("Filter by Supplier", suppliers_filter)
         selected_flight = st.selectbox("Filter by Flight Type", flight_filter)
-        start_date = st.date_input("Start Date", df_logs["Timestamp"].min().split(" ")[0])
-        end_date = st.date_input("End Date", df_logs["Timestamp"].max().split(" ")[0])
+        start_date = st.date_input("Start Date", pd.to_datetime(df_logs["Timestamp"].min()).date())
+        end_date = st.date_input("End Date", pd.to_datetime(df_logs["Timestamp"].max()).date())
 
         df_logs["DateOnly"] = pd.to_datetime(df_logs["Timestamp"]).dt.date
         df_filtered = df_logs[
@@ -146,7 +156,6 @@ if st.session_state.logged_in:
     if st.sidebar.button("Logout"):
         st.session_state.logged_in = False
         st.session_state.username = ""
-        st.success("Logged out successfully")
         st.experimental_rerun()
     if st.sidebar.button("View Logs"):
         show_logs()
@@ -182,7 +191,6 @@ if st.session_state.logged_in:
         "TBO Flights Online - BOMA774": 0.01,
         "FlyShop Series Online API": 0.01,
         "Flyshop online API": 0.01,
-        # ... baki suppliers ...
         "AirIQ Flights series Supplier": 0
     }
 
@@ -210,7 +218,6 @@ if st.session_state.logged_in:
         ads_fee = 120 if meta == "Wego Ads" else 0
         return base_fee + ads_fee, base_fee, ads_fee
 
-    # Calculation
     st.markdown("###")
     if st.button("🧮 Calculate"):
         meta_fee, base_fee_calc, ads_fee = calculate_meta_fee(meta_partner, flight_type, purchase_amount, pax_count)
@@ -219,14 +226,6 @@ if st.session_state.logged_in:
         plb_amount = 0
         plb_percent_text = "0%"
 
-        if supplier_name in ["Indigo Corporate Travelport Universal Api (KTBOM278)", "Indigo Regular Fare (Corporate)(KTBOM278)"]:
-            plb_amount = base_fare * (0.0075 if flight_type=="Domestic" else 0.015)
-            plb_percent_text = "0.75%" if flight_type=="Domestic" else "1.50%"
-        elif supplier_name in ["Indigo Regular Corp Chandni (14354255C)", "Indigo Retail Chandni (14354255C)"]:
-            plb_amount = base_fare * (0.0125 if flight_type=="Domestic" else 0.0185)
-            plb_percent_text = "1.25%" if flight_type=="Domestic" else "1.85%"
-
-        plb_amount = round(plb_amount, 2)
         purchase_side = purchase_amount + meta_fee + pg_fees
         sale_side = booking_amount + di_amount + handling_fees + plb_amount
         difference = round(sale_side - purchase_side, 2)
@@ -284,15 +283,6 @@ if st.session_state.logged_in:
 # ---------------- FOOTER ----------------
 st.markdown(
     """
-    <style>
-    .footer {
-        position: fixed;
-        left: 10px;
-        bottom: 10px;
-        color: #6c757d;
-        font-size: 12px;
-    }
-    </style>
     <div class="footer">
         Auto-updated via GitHub | Last updated on 11 Jan 2026
     </div>
