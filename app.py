@@ -9,33 +9,24 @@ import smtplib
 from email.message import EmailMessage
 
 # ---------------- PAGE CONFIG ----------------
-st.set_page_config(
-    page_title="Booking Safety Calculator",
-    layout="wide"
-)
+st.set_page_config(page_title="Booking Safety Calculator", layout="wide")
 
 # ---------------- CSS ----------------
-st.markdown(
-    """
-    <style>
-    /* Top padding so headings not cut off */
-    .block-container { padding-top: 3rem; }
-
-    .summary-box p { font-size: 12px; margin-bottom: 3px; }
-    .summary-box h3 { font-size: 14px; margin-bottom: 5px; }
-    .stSelectbox label, .stNumberInput label { font-size: 13px; }
-
-    .footer {
-        position: fixed;
-        left: 10px;
-        bottom: 10px;
-        color: #6c757d;
-        font-size: 12px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("""
+<style>
+.block-container { padding-top: 3rem; }
+.summary-box p { font-size: 12px; margin-bottom: 3px; }
+.summary-box h3 { font-size: 14px; margin-bottom: 5px; }
+.stSelectbox label, .stNumberInput label { font-size: 13px; }
+.footer {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    color: #6c757d;
+    font-size: 12px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------- SESSION STATE ----------------
 if "logged_in" not in st.session_state:
@@ -46,6 +37,8 @@ if "otp" not in st.session_state:
     st.session_state.otp = ""
 if "otp_verified" not in st.session_state:
     st.session_state.otp_verified = False
+if "page" not in st.session_state:
+    st.session_state.page = "login"  # pages: login, calculator, logs, change_password
 
 # ---------------- USER DATA ----------------
 users = {
@@ -126,33 +119,28 @@ def show_logs():
     else:
         st.info("No logs available yet.")
 
-# ---------------- LOGIN ----------------
-if not st.session_state.logged_in:
+# ---------------- LOGIN PAGE ----------------
+if st.session_state.page == "login":
     st.subheader("🔐 Login")
     username_input = st.text_input("Username")
     password_input = st.text_input("Password", type="password")
-    login_clicked = st.button("Login")
-
-    if login_clicked:
+    if st.button("Login"):
         if username_input in users and hash_password(password_input) == users[username_input][0]:
             st.session_state.logged_in = True
             st.session_state.username = username_input
-            st.success(f"Welcome {username_input}")
-            st.experimental_rerun()  # Safe rerun after login
-            st.stop()  # Must stop here
+            st.session_state.page = "calculator"
         else:
             st.error("Invalid credentials")
-            st.stop()
+    st.stop()  # stop rendering rest of app until login
 
-# ---------------- TOP-BAR BACK BUTTON ----------------
+# ---------------- BACK BUTTON ----------------
 if st.session_state.logged_in:
-    top_left, top_right = st.columns([8, 2])
-    with top_right:
+    col1, col2 = st.columns([8,2])
+    with col2:
         if st.button("🔙 Back"):
             st.session_state.logged_in = False
             st.session_state.username = ""
-            st.session_state.otp_verified = False
-            st.experimental_rerun()
+            st.session_state.page = "login"
             st.stop()
 
 # ---------------- SIDEBAR ----------------
@@ -161,34 +149,45 @@ if st.session_state.logged_in:
     if st.sidebar.button("Logout"):
         st.session_state.logged_in = False
         st.session_state.username = ""
-        st.experimental_rerun()
+        st.session_state.page = "login"
         st.stop()
     if st.sidebar.button("View Logs"):
-        show_logs()
+        st.session_state.page = "logs"
         st.stop()
     if st.sidebar.button("Change Password"):
-        st.session_state.otp_verified = False
-        st.subheader("🔄 Change Password")
-        new_password = st.text_input("Enter New Password", type="password")
-        if not st.session_state.otp_verified:
-            if st.button("Send OTP"):
-                email_to = users[st.session_state.username][1]
-                st.session_state.otp = generate_otp()
-                if send_otp_email(email_to, st.session_state.otp):
-                    st.info(f"OTP sent to {email_to}")
-        else:
-            entered_otp = st.text_input("Enter OTP sent to your email")
-            if st.button("Verify OTP & Change Password"):
-                if entered_otp == st.session_state.otp:
-                    users[st.session_state.username][0] = hash_password(new_password)
-                    st.success("Password changed successfully")
-                    st.session_state.otp_verified = False
-                else:
-                    st.error("Incorrect OTP")
+        st.session_state.page = "change_password"
         st.stop()
 
-# ---------------- CALCULATOR ----------------
-if st.session_state.logged_in:
+# ---------------- LOGS PAGE ----------------
+if st.session_state.page == "logs":
+    show_logs()
+    st.stop()
+
+# ---------------- CHANGE PASSWORD PAGE ----------------
+if st.session_state.page == "change_password":
+    st.subheader("🔄 Change Password")
+    new_password = st.text_input("Enter New Password", type="password")
+    if not st.session_state.otp_verified:
+        if st.button("Send OTP"):
+            email_to = users[st.session_state.username][1]
+            st.session_state.otp = generate_otp()
+            if send_otp_email(email_to, st.session_state.otp):
+                st.info(f"OTP sent to {email_to}")
+                st.session_state.otp_verified = True
+    else:
+        entered_otp = st.text_input("Enter OTP sent to your email")
+        if st.button("Verify OTP & Change Password"):
+            if entered_otp == st.session_state.otp:
+                users[st.session_state.username][0] = hash_password(new_password)
+                st.success("Password changed successfully")
+                st.session_state.otp_verified = False
+                st.session_state.page = "calculator"
+            else:
+                st.error("Incorrect OTP")
+    st.stop()
+
+# ---------------- CALCULATOR PAGE ----------------
+if st.session_state.page == "calculator":
     st.title("🧮 Booking Safety Calculator")
     st.caption("Operation Team – Safe vs Loss Booking Tool")
 
@@ -198,7 +197,6 @@ if st.session_state.logged_in:
         "Flyshop online API": 0.01,
         "AirIQ Flights series Supplier": 0
     }
-
     supplier_list = sorted(supplier_di.keys())
     supplier_list.insert(0, "Other")
 
@@ -216,25 +214,25 @@ if st.session_state.logged_in:
     with c9: pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
 
     def calculate_meta_fee(meta, flight, amount, pax):
-        if meta == "None": return 0, 0, 0
-        if flight == "Domestic": base_fee = 200 if pax <= 2 else 300
-        else: base_fee = 400 if amount <= 30000 else 600
-        ads_fee = 120 if meta == "Wego Ads" else 0
-        return base_fee + ads_fee, base_fee, ads_fee
+        if meta == "None": return 0,0,0
+        if flight=="Domestic": base_fee = 200 if pax<=2 else 300
+        else: base_fee = 400 if amount<=30000 else 600
+        ads_fee = 120 if meta=="Wego Ads" else 0
+        return base_fee+ads_fee, base_fee, ads_fee
 
     if st.button("🧮 Calculate"):
         meta_fee, base_fee_calc, ads_fee = calculate_meta_fee(meta_partner, flight_type, purchase_amount, pax_count)
-        di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
-        di_amount = round(purchase_amount * di_rate, 2)
+        di_rate = 0 if supplier_name=="Other" else supplier_di.get(supplier_name,0)
+        di_amount = round(purchase_amount*di_rate,2)
         plb_amount = 0
         plb_percent_text = "0%"
 
         purchase_side = purchase_amount + meta_fee + pg_fees
         sale_side = booking_amount + di_amount + handling_fees + plb_amount
-        difference = round(sale_side - purchase_side, 2)
-        result_text = "Safe" if difference >=0 else "Loss"
+        difference = round(sale_side - purchase_side,2)
+        result_text = "Safe" if difference>=0 else "Loss"
 
-        log_calculation(st.session_state.username, {
+        log_calculation(st.session_state.username,{
             "Supplier": supplier_name,
             "Flight Type": flight_type,
             "Booking Amount": booking_amount,
@@ -249,44 +247,31 @@ if st.session_state.logged_in:
         st.divider()
         st.subheader("📊 Calculation Summary")
         st.markdown('<div class="summary-box">', unsafe_allow_html=True)
-        o1, o2, o3, o4 = st.columns(4)
-
+        o1,o2,o3,o4 = st.columns(4)
         with o1:
             st.markdown("### 🏷 Supplier & DI")
             st.write(f"**Supplier:** {supplier_name}")
             st.write(f"**DI %:** {di_rate*100:.2f}%")
             st.write(f"**DI Amount:** ₹ {di_amount}")
-
         with o2:
             st.markdown("### 📢 Meta Fees")
             st.write(f"**Meta Partner:** {meta_partner}")
             st.write(f"**Base Fee:** ₹ {base_fee_calc}")
-            if meta_partner == "Wego Ads":
-                st.write(f"**Ads Fee:** ₹ {ads_fee}")
+            if meta_partner=="Wego Ads": st.write(f"**Ads Fee:** ₹ {ads_fee}")
             st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
-
         with o3:
             st.markdown("### 🎯 PLB")
             st.write(f"**Base Fare:** ₹ {base_fare}")
             st.write(f"**PLB % Applied:** {plb_percent_text}")
             st.write(f"**PLB Amount:** ₹ {plb_amount}")
-
         with o4:
             st.markdown("### 💰 Purchase vs Sale")
             st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
             st.write(f"**Sale Side (Booking + DI + Handling + PLB):** ₹ {sale_side}")
             st.markdown(f"### 💹 Difference: ₹ {difference}")
-            if difference < 0: st.error("❌ Loss Booking")
+            if difference<0: st.error("❌ Loss Booking")
             else: st.success("✅ Safe Booking")
-
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- FOOTER ----------------
-st.markdown(
-    """
-    <div class="footer">
-        Auto-updated via GitHub | Last updated on 11 Jan 2026
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown('<div class="footer">Auto-updated via GitHub | Last updated on 11 Jan 2026</div>', unsafe_allow_html=True)
