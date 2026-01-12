@@ -50,8 +50,8 @@ supplier_di = {
     "Indigo Regular Fare (Corporate)(KTBOM278)": 0.0045,
     "Indigo Retail Chandni (14354255C)": 0.0034,
     "Indigo Regular Corp Chandni (14354255C)": 0.0034,
-    "BTO Bhasin Travels HAP OP7": 0.01,
-    "Bhasin Travel Online HAP 7U63": 0.0184,
+    "BTO Bhasin Travels HAP OP7": 0.0125,
+    "Bhasin Travel Online HAP 7U63": 0.0125,
     "AIR IQ": 0.01,
     "Tripjack Flights": 0.005,
     "Etrav HAP 58Y8": 0.01,
@@ -248,3 +248,4 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
