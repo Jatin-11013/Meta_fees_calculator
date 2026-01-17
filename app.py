@@ -98,42 +98,300 @@ supplier_di = {
     "AirIQ Flights series Supplier": 0
 }
 
-# -------- ADD OTHER OPTION AT TOP --------
 supplier_list = sorted(supplier_di.keys())
 supplier_list.insert(0, "Other")
 
 # ---------------- INPUT ROW 1 ----------------
 c1, c2, c3, c4 = st.columns(4)
-
 with c1:
     meta_partner = st.selectbox("Meta Partner", ["None", "Wego", "Wego Ads"])
-
 with c2:
     flight_type = st.selectbox("Flight Type", ["Domestic", "International"])
-
 with c3:
     supplier_name = st.selectbox("Supplier Name", supplier_list)
-
 with c4:
     pax_count = st.number_input("Pax Count", min_value=1, step=1)
 
 # ---------------- INPUT ROW 2 ----------------
 c5, c6, c7, c8, c9 = st.columns(5)
-
 with c5:
     base_fare = st.number_input("Base Fare (₹)", min_value=0.0, step=100.0)
-
 with c6:
     purchase_amount = st.number_input("Purchase Amount (₹)", min_value=0.0, step=100.0)
-
 with c7:
     booking_amount = st.number_input("Booking Amount (₹)", min_value=0.0, step=100.0)
-
 with c8:
     handling_fees = st.number_input("Handling Fees (₹)", min_value=0.0, step=10.0)
-
 with c9:
-    pg_fees = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
+    pg_fees_input = st.number_input("PG Fees (₹)", min_value=0.0, step=10.0)
+
+# ---------------- PG SELECTION ----------------
+c10, c11 = st.columns(2)
+with c10:
+    payment_category = st.selectbox("Payment Method", [
+        "Net Banking(AXIS)", "Net Banking(ICICI)", "Net Banking(HDFC)", "Net Banking(KOTAK)","Net Banking(YES)","Net Banking(OTHER)","Net Banking(SBI)",
+        "Credit Cards(Visa)", "Credit Cards(Master)", "Credit Cards(Rupay)","Credit Cards(Diners)","Credit Cards(Amex)","Credit Cards(Corporate)","Credit Cards(International)",
+        "Debit Cards(Visa)", "Debit Cards(Master)", "Debit Cards(Rupay)","Debit Cards(International)","Debit Cards(Corporate)","Debit Cards(Prepaid)",
+        "UPI","EMI", "Cardless EMI","Wallet(PhonePe)","Wallet(Amazon Pay)","Wallet(Ola)","Wallet(Jio)","Wallet(Mobikwik)","Wallet(Freecharge)","Wallet(Airtel)","Wallet(Payzapp)","Wallet(Bajaj)","Wallet(Yes Pay)"
+    ])
+with c11:
+    pg_name = st.selectbox("Payment Gateway", [
+        "PhonePe(Aertrip)", "PhonePe", "RazorPay(Aertrip)", "PayU", "Easebuzz"
+    ])
+
+# ---------------- PG FEES MASTER ----------------
+pg_rates = {
+    "Net Banking(HDFC)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("percent", 1.50),
+        "RazorPay(Aertrip)": ("percent", 1.55),
+        "PayU": ("percent", 0.0),
+        "Easebuzz": ("percent", 1.65)
+    },
+    "Net Banking(ICICI)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("flat", 22.0),
+        "RazorPay(Aertrip)": ("percent", 1.55),
+        "PayU": ("flat", 30.29),
+        "Easebuzz": ("flat", 12.50)
+    },
+    "Net Banking(KOTAK)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("flat", 33.0),
+        "RazorPay(Aertrip)": ("percent", 1.55),
+        "PayU": ("flat", 23.29),
+        "Easebuzz": ("flat", 12.50)
+    },
+    "Net Banking(SBI)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("flat", 22.0),
+        "RazorPay(Aertrip)": ("percent", 1.55),
+        "PayU": ("flat", 30.29),
+        "Easebuzz": ("flat", 12.50)
+    },
+    "Net Banking(AXIS)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("flat", 22.0),
+        "RazorPay(Aertrip)": ("percent", 1.55),
+        "PayU": ("flat", 25.29),
+        "Easebuzz": ("flat", 12.50)
+    },
+    "Net Banking(YES)": {
+        "PhonePe(Aertrip)": ("percent", 1.00),
+        "PhonePe": ("flat", 18.0),
+        "RazorPay(Aertrip)": ("percent", 1.55),
+        "PayU": ("flat", 23.29),
+        "Easebuzz": ("flat", 12.50)
+    },
+    "Net Banking(OTHER)": {
+        "PhonePe(Aertrip)": ("percent", 1.00),
+        "PhonePe": ("flat", 18.0),
+        "RazorPay(Aertrip)": ("percent", 1.50),
+        "PayU": ("flat", 23.29),
+        "Easebuzz": ("flat", 12.50)
+    },
+
+    "Credit Cards(Master)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("percent", 1.50),
+        "RazorPay(Aertrip)": ("percent", 1.86),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.60)
+    },
+    "Credit Cards(Visa)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("percent", 1.50),
+        "RazorPay(Aertrip)": ("percent", 1.86),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.60)
+    },
+    "Credit Cards(Rupay)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("percent", 1.50),
+        "RazorPay(Aertrip)": ("percent", 1.86),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.60)
+    },
+    "Credit Cards(Diners)": {
+        "PhonePe(Aertrip)": ("percent", 1.80),
+        "PhonePe": ("percent", 1.80),
+        "RazorPay(Aertrip)": ("percent", 2.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 2.75)
+    },
+    "Credit Cards(Amex)": {
+        "PhonePe(Aertrip)": ("percent", 2.55),
+        "PhonePe": ("percent", 2.55),
+        "RazorPay(Aertrip)": ("percent", 2.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 2.75)
+    },
+    "Credit Cards(Corporate Credit Cards)": {
+        "PhonePe(Aertrip)": ("percent", 2.25),
+        "PhonePe": ("percent", 2.25),
+        "RazorPay(Aertrip)": ("percent", 2.55),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 2.50)
+    },
+    "Credit Cards(International Credit Cards)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 2.60),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 4.00)
+    },
+
+    "Debit Cards(Master)(<=2000)": {
+        "PhonePe(Aertrip)": ("percent", 0.35),
+        "PhonePe": ("percent", 0.35),
+        "RazorPay(Aertrip)": ("percent", 0.40),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 0.50)
+    },
+    "Debit Cards(Visa)(<=2000)": {
+        "PhonePe(Aertrip)": ("percent", 0.35),
+        "PhonePe": ("percent", 0.35),
+        "RazorPay(Aertrip)": ("percent", 0.40),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 0.50)
+    },
+    "Debit Cards(Master)(>2000)": {
+        "PhonePe(Aertrip)": ("percent", 0.78),
+        "PhonePe": ("percent", 0.78),
+        "RazorPay(Aertrip)": ("percent", 0.80),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 0.60)
+    },
+    "Debit Cards(Visa)(>2000)": {
+        "PhonePe(Aertrip)": ("percent", 0.78),
+        "PhonePe": ("percent", 0.78),
+        "RazorPay(Aertrip)": ("percent", 0.80),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 0.60)
+    },
+    "Debit Cards(Corporate Debit Cards)": {
+        "PhonePe(Aertrip)": ("percent", 2.25),
+        "PhonePe": ("percent", 2.25),
+        "RazorPay(Aertrip)": ("percent", 2.55),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 2.20)
+    },
+    "Debit Cards(Rupay)": {
+        "PhonePe(Aertrip)": ("percent", 0.0),
+        "PhonePe": ("percent", 0.0),
+        "RazorPay(Aertrip)": ("percent", 0.10),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 0.0)
+    },
+    "Debit Cards(Prepaid Cards)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("percent", 1.50),
+        "RazorPay(Aertrip)": ("percent", 2.00),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 2.50)
+    },
+    "Debit Cards(International Debit Cards)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 2.60),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 4.00)
+    },
+
+    "UPI": {
+        "PhonePe(Aertrip)": ("percent", 0.0),
+        "PhonePe": ("percent", 0.0),
+        "RazorPay(Aertrip)": ("percent", 0.50),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 0.0)
+    },
+
+    "EMI": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 2.50),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("flat", 0.0)
+    },
+    "Cardless EMI": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 2.50),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("flat", 0.0)
+    },
+
+    "Wallet(PhonePe)": {
+        "PhonePe(Aertrip)": ("percent", 1.50),
+        "PhonePe": ("percent", 1.50),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.50)
+    },
+    "Wallet(Amazon Pay)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.50)
+    },
+    "Wallet(Ola)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.50)
+    },
+    "Wallet(Jio)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.50)
+    },
+    "Wallet(Mobikwik)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.50)
+    },
+    "Wallet(Freecharge)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("flat", 0.0)
+    },
+    "Wallet(Airtel)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.50)
+    },
+    "Wallet(Payzapp)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.50)
+    },
+    "Wallet(Bajaj)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.50)
+    },
+    "Wallet(Yes Pay)": {
+        "PhonePe(Aertrip)": ("flat", 0.0),
+        "PhonePe": ("flat", 0.0),
+        "RazorPay(Aertrip)": ("percent", 1.70),
+        "PayU": ("flat", 0.0),
+        "Easebuzz": ("percent", 1.50)
+    }
+}
 
 # ---------------- FUNCTIONS ----------------
 def calculate_meta_fee(meta, flight, amount, pax):
@@ -149,27 +407,30 @@ def calculate_meta_fee(meta, flight, amount, pax):
 # ---------------- CALCULATE ----------------
 st.markdown("###")
 if st.button("🧮 Calculate"):
-    meta_fee, base_fee, ads_fee = calculate_meta_fee(
+    meta_fee, base_fee_calc, ads_fee = calculate_meta_fee(
         meta_partner, flight_type, purchase_amount, pax_count
     )
 
+    # 🔹 PG FEES AUTO CALCULATION
+    total_for_pg = booking_amount + handling_fees
+    pg_fees = 0
+    if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
+        rate_type, value = pg_rates[payment_category][pg_name]
+        if rate_type == "percent":
+            pg_fees = round(total_for_pg * value / 100, 2)
+        else:
+            pg_fees = value
+
+    # 🔹 DI Amount
     di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
     di_amount = round(purchase_amount * di_rate, 2)
 
+    # 🔹 PLB calculation
     plb_amount = 0
-
-    if supplier_name in [
-        "Indigo Corporate Travelport Universal Api (KTBOM278)",
-        "Indigo Regular Fare (Corporate)(KTBOM278)"
-    ]:
-        plb_amount = base_fare * (0.0075 if flight_type == "Domestic" else 0.015)
-
-    elif supplier_name in [
-        "Indigo Regular Corp Chandni (14354255C)",
-        "Indigo Retail Chandni (14354255C)"
-    ]:
-        plb_amount = base_fare * (0.0125 if flight_type == "Domestic" else 0.0185)
-
+    if supplier_name in ["Indigo Corporate Travelport Universal Api (KTBOM278)", "Indigo Regular Fare (Corporate)(KTBOM278)"]:
+        plb_amount = base_fare * (0.0075 if flight_type=="Domestic" else 0.015)
+    elif supplier_name in ["Indigo Regular Corp Chandni (14354255C)", "Indigo Retail Chandni (14354255C)"]:
+        plb_amount = base_fare * (0.0125 if flight_type=="Domestic" else 0.0185)
     plb_amount = round(plb_amount, 2)
 
     purchase_side = purchase_amount + meta_fee + pg_fees
@@ -179,19 +440,18 @@ if st.button("🧮 Calculate"):
     st.divider()
     st.subheader("📊 Calculation Summary")
     st.markdown('<div class="summary-box">', unsafe_allow_html=True)
-
     o1, o2, o3, o4 = st.columns(4)
 
     with o1:
         st.markdown("### 🏷 Supplier & DI")
         st.write(f"**Supplier:** {supplier_name}")
-        st.write(f"**DI %:** {di_rate * 100:.2f}%")
+        st.write(f"**DI %:** {di_rate*100:.2f}%")
         st.write(f"**DI Amount:** ₹ {di_amount}")
 
     with o2:
         st.markdown("### 📢 Meta Fees")
         st.write(f"**Meta Partner:** {meta_partner}")
-        st.write(f"**Base Fee:** ₹ {base_fee}")
+        st.write(f"**Base Fee:** ₹ {base_fee_calc}")
         if meta_partner == "Wego Ads":
             st.write(f"**Ads Fee:** ₹ {ads_fee}")
         st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
@@ -199,19 +459,10 @@ if st.button("🧮 Calculate"):
     with o3:
         st.markdown("### 🎯 PLB")
         plb_percent_text = "0%"
-
-        if supplier_name in [
-            "Indigo Corporate Travelport Universal Api (KTBOM278)",
-            "Indigo Regular Fare (Corporate)(KTBOM278)"
-        ]:
-            plb_percent_text = "0.75%" if flight_type == "Domestic" else "1.50%"
-
-        elif supplier_name in [
-            "Indigo Regular Corp Chandni (14354255C)",
-            "Indigo Retail Chandni (14354255C)"
-        ]:
-            plb_percent_text = "1.25%" if flight_type == "Domestic" else "1.85%"
-
+        if supplier_name in ["Indigo Corporate Travelport Universal Api (KTBOM278)", "Indigo Regular Fare (Corporate)(KTBOM278)"]:
+            plb_percent_text = "0.75%" if flight_type=="Domestic" else "1.50%"
+        elif supplier_name in ["Indigo Regular Corp Chandni (14354255C)", "Indigo Retail Chandni (14354255C)"]:
+            plb_percent_text = "1.25%" if flight_type=="Domestic" else "1.85%"
         st.write(f"**Base Fare:** ₹ {base_fare}")
         st.write(f"**PLB % Applied:** {plb_percent_text}")
         st.write(f"**PLB Amount:** ₹ {plb_amount}")
@@ -221,7 +472,6 @@ if st.button("🧮 Calculate"):
         st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
         st.write(f"**Sale Side (Booking + DI + Handling + PLB):** ₹ {sale_side}")
         st.markdown(f"### 💹 Difference: ₹ {difference}")
-
         if difference < 0:
             st.error("❌ Loss Booking")
         else:
@@ -241,13 +491,9 @@ st.markdown(
         font-size: 12px;
     }
     </style>
-
     <div class="footer">
         Auto-updated via GitHub | Last updated on 11 Jan 2026
     </div>
     """,
     unsafe_allow_html=True
 )
-
-
-
