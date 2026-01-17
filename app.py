@@ -129,7 +129,7 @@ with c9:
 c10, c11 = st.columns(2)
 with c10:
     payment_category = st.selectbox("Payment Method", [
-        "Net Banking(AXIS)", "Net Banking(ICICI)", "Net Banking(HDFC)", "Net Banking(KOTAK)","Net Banking(YES)","Net Banking(OTHER)","Net Banking(SBI)",
+        "Net Banking(AXIS)", "None", "Net Banking(ICICI)", "Net Banking(HDFC)", "Net Banking(KOTAK)","Net Banking(YES)","Net Banking(OTHER)","Net Banking(SBI)",
         "Credit Cards(Visa)", "Credit Cards(Master)", "Credit Cards(Rupay)","Credit Cards(Diners)","Credit Cards(Amex)","Credit Cards(Corporate)","Credit Cards(International)",
         "Debit Cards(Visa)", "Debit Cards(Master)", "Debit Cards(Rupay)","Debit Cards(International)","Debit Cards(Corporate)","Debit Cards(Prepaid)",
         "UPI","EMI", "Cardless EMI","Wallet(PhonePe)","Wallet(Amazon Pay)","Wallet(Ola)","Wallet(Jio)","Wallet(Mobikwik)","Wallet(Freecharge)","Wallet(Airtel)","Wallet(Payzapp)","Wallet(Bajaj)","Wallet(Yes Pay)"
@@ -413,18 +413,27 @@ if st.button("🧮 Calculate"):
 
     # 🔹 PG FEES AUTO CALCULATION
     total_for_pg = booking_amount + handling_fees
-    pg_fees = 0
+    pg_fees = pg_fees_input  # use manual input first
     rate_type = "N/A"
     value = 0
-    if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
-        rate_type, value = pg_rates[payment_category][pg_name]
-        if rate_type == "percent":
-            pg_fees = round(total_for_pg * value / 100, 2)
-        else:
-            pg_fees = value
-    
+
+    if payment_category == "None":
+        pg_fees = 0
+        rate_type = "None"
+        value = 0
+
+    elif pg_fees_input in [0, None]:  # auto-calculate only if manual input blank or 0
+        if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
+            rate_type, value = pg_rates[payment_category][pg_name]
+            if rate_type == "percent":
+                pg_fees = round(total_for_pg * value / 100, 2)
+                else:
+                pg_fees = value
+                
     # total_for_pg = booking_amount + handling_fees
     # pg_fees = 0
+    # rate_type = "N/A"
+    # value = 0
     # if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
     #     rate_type, value = pg_rates[payment_category][pg_name]
     #     if rate_type == "percent":
