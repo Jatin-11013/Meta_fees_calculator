@@ -440,7 +440,7 @@ if st.button("🧮 Calculate"):
     st.divider()
     st.subheader("📊 Calculation Summary")
     st.markdown('<div class="summary-box">', unsafe_allow_html=True)
-    o1, o2, o3, o4 = st.columns(4)
+    o1, o2, o3, o4, o5 = st.columns(5)
 
     with o1:
         st.markdown("### 🏷 Supplier & DI")
@@ -457,6 +457,15 @@ if st.button("🧮 Calculate"):
         st.write(f"**Total Meta Fees:** ₹ {meta_fee}")
 
     with o3:
+        st.markdown("### 💳 PG Fees")
+        st.write(f"**Payment Method:** {payment_category}")
+        st.write(f"**Payment Gateway:** {pg_name}")
+        st.write(f"**PG Fee Type:** {rate_type}")
+        pg_percent_text = f"{value}%" if rate_type=="percent" else "Flat"
+        st.write(f"**PG Fee % / Flat:** {pg_percent_text}")
+        st.write(f"**PG Fees Amount:** ₹ {pg_fees}")
+
+    with o4:
         st.markdown("### 🎯 PLB")
         plb_percent_text = "0%"
         if supplier_name in ["Indigo Corporate Travelport Universal Api (KTBOM278)", "Indigo Regular Fare (Corporate)(KTBOM278)"]:
@@ -467,7 +476,7 @@ if st.button("🧮 Calculate"):
         st.write(f"**PLB % Applied:** {plb_percent_text}")
         st.write(f"**PLB Amount:** ₹ {plb_amount}")
 
-    with o4:
+    with o5:
         st.markdown("### 💰 Purchase vs Sale")
         st.write(f"**Purchase Side (Purchase + Meta + PG):** ₹ {purchase_side}")
         st.write(f"**Sale Side (Booking + DI + Handling + PLB):** ₹ {sale_side}")
