@@ -55,7 +55,6 @@ supplier_di = {
     "AIR IQ": 0.01,
     "Tripjack Flights": 0.005,
     "Etrav HAP 58Y8": 0.01,
-
     # ZERO DI suppliers
     "Consulate General of Indonesia-Mumbai": 0,
     "RIYA HAP 6A4T": 0,
@@ -405,83 +404,39 @@ def calculate_meta_fee(meta, flight, amount, pax):
     return base_fee + ads_fee, base_fee, ads_fee
 
 # ---------------- CALCULATE ----------------
-st.markdown("###")
 if st.button("🧮 Calculate"):
+    # ----- META FEES -----
     meta_fee, base_fee_calc, ads_fee = calculate_meta_fee(
         meta_partner, flight_type, purchase_amount, pax_count
     )
 
-    # 🔹 PG FEES AUTO CALCULATION
-    # 🔹 PG FEES AUTO CALCULATION
-total_for_pg = booking_amount + handling_fees
-pg_fees = pg_fees_input  # use manual input first
-rate_type = "N/A"
-value = 0
-
-if payment_category == "None":
-    pg_fees = 0
-    rate_type = "None"
+    # ----- PG FEES -----
+    total_for_pg = booking_amount + handling_fees
+    pg_fees = pg_fees_input
+    rate_type = "N/A"
     value = 0
 
-elif pg_fees_input in [0, None]:  # auto-calculate only if manual input blank or 0
-
-    # ----- DEBIT CARD LOGIC -----
-    if "Debit Cards" in payment_category:
-        # Determine threshold
-        if "(<=2000)" in payment_category:
-            key = payment_category
-        elif "(>2000)" in payment_category:
-            key = payment_category
-        else:
-            # auto-select based on total booking_amount
-            if booking_amount <= 2000:
-                key = payment_category + "(<=2000)"
-            else:
-                key = payment_category + "(>2000)"
-    else:
+    if payment_category == "None":
+        pg_fees = 0
+        rate_type = "None"
+        value = 0
+    elif pg_fees_input in [0, None]:
         key = payment_category
+        # Debit card special logic
+        if "Debit Cards" in payment_category:
+            if "(<=2000)" not in payment_category and "(>2000)" not in payment_category:
+                key += "(<=2000)" if booking_amount <= 2000 else "(>2000)"
+        if key in pg_rates and pg_name in pg_rates[key]:
+            rate_type, value = pg_rates[key][pg_name]
+            if rate_type == "percent":
+                pg_fees = round(total_for_pg * value / 100, 2)
+            else:
+                pg_fees = value
 
-    if key in pg_rates and pg_name in pg_rates[key]:
-        rate_type, value = pg_rates[key][pg_name]
-        if rate_type == "percent":
-            pg_fees = round(total_for_pg * value / 100, 2)
-        else:
-            pg_fees = value
-    
-    # total_for_pg = booking_amount + handling_fees
-    # pg_fees = pg_fees_input  # use manual input first
-    # rate_type = "N/A"
-    # value = 0
-
-    # if payment_category == "None":
-    #     pg_fees = 0
-    #     rate_type = "None"
-    #     value = 0
-
-    # elif pg_fees_input in [0, None]:  # auto-calculate only if manual input blank or 0
-    #     if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
-    #         rate_type, value = pg_rates[payment_category][pg_name]
-    #         if rate_type == "percent":
-    #             pg_fees = round(total_for_pg * value / 100, 2)
-    #         else:
-    #             pg_fees = value
-                
-    # total_for_pg = booking_amount + handling_fees
-    # pg_fees = 0
-    # rate_type = "N/A"
-    # value = 0
-    # if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
-    #     rate_type, value = pg_rates[payment_category][pg_name]
-    #     if rate_type == "percent":
-    #         pg_fees = round(total_for_pg * value / 100, 2)
-    #     else:
-    #         pg_fees = value
-
-    # 🔹 DI Amount
+    # ----- DI & PLB -----
     di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
     di_amount = round(purchase_amount * di_rate, 2)
 
-    # 🔹 PLB calculation
     plb_amount = 0
     if supplier_name in ["Indigo Corporate Travelport Universal Api (KTBOM278)", "Indigo Regular Fare (Corporate)(KTBOM278)"]:
         plb_amount = base_fare * (0.0075 if flight_type=="Domestic" else 0.015)
@@ -489,10 +444,12 @@ elif pg_fees_input in [0, None]:  # auto-calculate only if manual input blank or
         plb_amount = base_fare * (0.0125 if flight_type=="Domestic" else 0.0185)
     plb_amount = round(plb_amount, 2)
 
+    # ----- PURCHASE VS SALE -----
     purchase_side = purchase_amount + meta_fee + pg_fees
     sale_side = booking_amount + di_amount + handling_fees + plb_amount
     difference = round(sale_side - purchase_side, 2)
 
+    # ----- DISPLAY -----
     st.divider()
     st.subheader("📊 Calculation Summary")
     st.markdown('<div class="summary-box">', unsafe_allow_html=True)
@@ -541,7 +498,6 @@ elif pg_fees_input in [0, None]:  # auto-calculate only if manual input blank or
             st.error("❌ Loss Booking")
         else:
             st.success("✅ Safe Booking")
-
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- FOOTER ----------------
