@@ -232,7 +232,7 @@ pg_rates = {
         "PayU": ("flat", 0.0),
         "Easebuzz": ("percent", 2.50)
     },
-    "Credit Cards(International Credit Cards)": {
+    "Credit Cards(International)": {
         "PhonePe(Aertrip)": ("flat", 0.0),
         "PhonePe": ("flat", 0.0),
         "RazorPay(Aertrip)": ("percent", 2.60),
@@ -282,14 +282,14 @@ pg_rates = {
         "PayU": ("flat", 0.0),
         "Easebuzz": ("percent", 0.0)
     },
-    "Debit Cards(Prepaid Cards)": {
+    "Debit Cards(Prepaid)": {
         "PhonePe(Aertrip)": ("percent", 1.50),
         "PhonePe": ("percent", 1.50),
         "RazorPay(Aertrip)": ("percent", 2.00),
         "PayU": ("flat", 0.0),
         "Easebuzz": ("percent", 2.50)
     },
-    "Debit Cards(International Debit Cards)": {
+    "Debit Cards(International)": {
         "PhonePe(Aertrip)": ("flat", 0.0),
         "PhonePe": ("flat", 0.0),
         "RazorPay(Aertrip)": ("percent", 2.60),
