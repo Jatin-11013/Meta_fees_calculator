@@ -414,12 +414,23 @@ if st.button("🧮 Calculate"):
     # 🔹 PG FEES AUTO CALCULATION
     total_for_pg = booking_amount + handling_fees
     pg_fees = 0
+    rate_type = "N/A"
+    value = 0
     if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
         rate_type, value = pg_rates[payment_category][pg_name]
         if rate_type == "percent":
             pg_fees = round(total_for_pg * value / 100, 2)
         else:
             pg_fees = value
+    
+    # total_for_pg = booking_amount + handling_fees
+    # pg_fees = 0
+    # if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
+    #     rate_type, value = pg_rates[payment_category][pg_name]
+    #     if rate_type == "percent":
+    #         pg_fees = round(total_for_pg * value / 100, 2)
+    #     else:
+    #         pg_fees = value
 
     # 🔹 DI Amount
     di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
