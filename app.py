@@ -225,7 +225,7 @@ pg_rates = {
         "PayU": ("flat", 0.0),
         "Easebuzz": ("percent", 2.75)
     },
-    "Credit Cards(Corporate Credit Cards)": {
+    "Credit Cards(Corporate)": {
         "PhonePe(Aertrip)": ("percent", 2.25),
         "PhonePe": ("percent", 2.25),
         "RazorPay(Aertrip)": ("percent", 2.55),
