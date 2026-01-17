@@ -268,7 +268,7 @@ pg_rates = {
         "PayU": ("flat", 0.0),
         "Easebuzz": ("percent", 0.60)
     },
-    "Debit Cards(Corporate Debit Cards)": {
+    "Debit Cards(Corporate)": {
         "PhonePe(Aertrip)": ("percent", 2.25),
         "PhonePe": ("percent", 2.25),
         "RazorPay(Aertrip)": ("percent", 2.55),
