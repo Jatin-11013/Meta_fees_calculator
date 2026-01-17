@@ -411,55 +411,26 @@ if st.button("🧮 Calculate"):
     )
 
     # ----- PG FEES -----
-    # ----- PG FEES -----
-total_for_pg = booking_amount + handling_fees
-pg_fees = pg_fees_input
-rate_type = "N/A"
-value = 0
-
-if payment_category == "None":
-    pg_fees = 0
-    rate_type = "None"
+    total_for_pg = booking_amount + handling_fees
+    pg_fees = pg_fees_input
+    rate_type = "N/A"
     value = 0
-elif pg_fees_input in [0, None]:
-    key = payment_category
-    
-    # Debit card special logic only for Visa & Master
-    if "Debit Cards" in payment_category:
-        if payment_category in ["Debit Cards(Visa)", "Debit Cards(Master)"]:
-            key += "(<=2000)" if booking_amount <= 2000 else "(>2000)"
-        # Other debit cards (Corporate, Rupay, Prepaid, International) use simple key as is
-        # No modification needed
 
-    if key in pg_rates and pg_name in pg_rates[key]:
-        rate_type, value = pg_rates[key][pg_name]
-        if rate_type == "percent":
-            pg_fees = round(total_for_pg * value / 100, 2)
-        else:
-            pg_fees = value
-
-    
-    # total_for_pg = booking_amount + handling_fees
-    # pg_fees = pg_fees_input
-    # rate_type = "N/A"
-    # value = 0
-
-    # if payment_category == "None":
-    #     pg_fees = 0
-    #     rate_type = "None"
-    #     value = 0
-    # elif pg_fees_input in [0, None]:
-    #     key = payment_category
-    #     # Debit card special logic
-    #     if "Debit Cards" in payment_category:
-    #         if "(<=2000)" not in payment_category and "(>2000)" not in payment_category:
-    #             key += "(<=2000)" if booking_amount <= 2000 else "(>2000)"
-    #     if key in pg_rates and pg_name in pg_rates[key]:
-    #         rate_type, value = pg_rates[key][pg_name]
-    #         if rate_type == "percent":
-    #             pg_fees = round(total_for_pg * value / 100, 2)
-    #         else:
-    #             pg_fees = value
+    if payment_category == "None":
+        pg_fees = 0
+        rate_type = "None"
+        value = 0
+    elif pg_fees_input in [0, None]:
+        key = payment_category
+        if "Debit Cards" in payment_category:
+            if payment_category in ["Debit Cards(Visa)", "Debit Cards(Master)"]:
+                key += "(<=2000)" if booking_amount <= 2000 else "(>2000)"
+        if key in pg_rates and pg_name in pg_rates[key]:
+            rate_type, value = pg_rates[key][pg_name]
+            if rate_type == "percent":
+                pg_fees = round(total_for_pg * value / 100, 2)
+            else:
+                pg_fees = value
 
     # ----- DI & PLB -----
     di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
