@@ -412,23 +412,59 @@ if st.button("🧮 Calculate"):
     )
 
     # 🔹 PG FEES AUTO CALCULATION
-    total_for_pg = booking_amount + handling_fees
-    pg_fees = pg_fees_input  # use manual input first
-    rate_type = "N/A"
+    # 🔹 PG FEES AUTO CALCULATION
+total_for_pg = booking_amount + handling_fees
+pg_fees = pg_fees_input  # use manual input first
+rate_type = "N/A"
+value = 0
+
+if payment_category == "None":
+    pg_fees = 0
+    rate_type = "None"
     value = 0
 
-    if payment_category == "None":
-        pg_fees = 0
-        rate_type = "None"
-        value = 0
+elif pg_fees_input in [0, None]:  # auto-calculate only if manual input blank or 0
 
-    elif pg_fees_input in [0, None]:  # auto-calculate only if manual input blank or 0
-        if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
-            rate_type, value = pg_rates[payment_category][pg_name]
-            if rate_type == "percent":
-                pg_fees = round(total_for_pg * value / 100, 2)
+    # ----- DEBIT CARD LOGIC -----
+    if "Debit Cards" in payment_category:
+        # Determine threshold
+        if "(<=2000)" in payment_category:
+            key = payment_category
+        elif "(>2000)" in payment_category:
+            key = payment_category
+        else:
+            # auto-select based on total booking_amount
+            if booking_amount <= 2000:
+                key = payment_category + "(<=2000)"
             else:
-                pg_fees = value
+                key = payment_category + "(>2000)"
+    else:
+        key = payment_category
+
+    if key in pg_rates and pg_name in pg_rates[key]:
+        rate_type, value = pg_rates[key][pg_name]
+        if rate_type == "percent":
+            pg_fees = round(total_for_pg * value / 100, 2)
+        else:
+            pg_fees = value
+    
+    # total_for_pg = booking_amount + handling_fees
+    # pg_fees = pg_fees_input  # use manual input first
+    # rate_type = "N/A"
+    # value = 0
+
+    # if payment_category == "None":
+    #     pg_fees = 0
+    #     rate_type = "None"
+    #     value = 0
+
+    # elif pg_fees_input in [0, None]:  # auto-calculate only if manual input blank or 0
+    #     if payment_category in pg_rates and pg_name in pg_rates[payment_category]:
+    #         rate_type, value = pg_rates[payment_category][pg_name]
+    #         if rate_type == "percent":
+    #             pg_fees = round(total_for_pg * value / 100, 2)
+    #         else:
+    #             pg_fees = value
                 
     # total_for_pg = booking_amount + handling_fees
     # pg_fees = 0
