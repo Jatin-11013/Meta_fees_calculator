@@ -129,7 +129,7 @@ with c9:
 c10, c11 = st.columns(2)
 with c10:
     payment_category = st.selectbox("Payment Method", [
-        "Net Banking(AXIS)", "None", "Net Banking(ICICI)", "Net Banking(HDFC)", "Net Banking(KOTAK)","Net Banking(YES)","Net Banking(OTHER)","Net Banking(SBI)",
+        "None","Net Banking(AXIS)", "Net Banking(ICICI)", "Net Banking(HDFC)", "Net Banking(KOTAK)","Net Banking(YES)","Net Banking(OTHER)","Net Banking(SBI)",
         "Credit Cards(Visa)", "Credit Cards(Master)", "Credit Cards(Rupay)","Credit Cards(Diners)","Credit Cards(Amex)","Credit Cards(Corporate)","Credit Cards(International)",
         "Debit Cards(Visa)", "Debit Cards(Master)", "Debit Cards(Rupay)","Debit Cards(International)","Debit Cards(Corporate)","Debit Cards(Prepaid)",
         "UPI","EMI", "Cardless EMI","Wallet(PhonePe)","Wallet(Amazon Pay)","Wallet(Ola)","Wallet(Jio)","Wallet(Mobikwik)","Wallet(Freecharge)","Wallet(Airtel)","Wallet(Payzapp)","Wallet(Bajaj)","Wallet(Yes Pay)"
