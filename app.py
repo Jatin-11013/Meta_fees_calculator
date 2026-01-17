@@ -412,25 +412,26 @@ if st.button("🧮 Calculate"):
 
     # ----- PG FEES -----
     total_for_pg = booking_amount + handling_fees
-    pg_fees = pg_fees_input
+    pg_fees = pg_fees_input  # start with manual input
     rate_type = "N/A"
     value = 0
 
-    if payment_category == "None":
-        pg_fees = 0
-        rate_type = "None"
-        value = 0
-    elif pg_fees_input in [0, None]:
-        key = payment_category
-        if "Debit Cards" in payment_category:
-            if payment_category in ["Debit Cards(Visa)", "Debit Cards(Master)"]:
-                key += "(<=2000)" if booking_amount <= 2000 else "(>2000)"
-        if key in pg_rates and pg_name in pg_rates[key]:
-            rate_type, value = pg_rates[key][pg_name]
-            if rate_type == "percent":
-                pg_fees = round(total_for_pg * value / 100, 2)
-            else:
-                pg_fees = value
+    if pg_fees_input in [0, None]:
+        if payment_category != "None":
+            key = payment_category
+            # Debit card ranges adjustment
+            if "Debit Cards" in payment_category:
+                if payment_category in ["Debit Cards(Visa)", "Debit Cards(Master)"]:
+                    key += "(<=2000)" if booking_amount <= 2000 else "(>2000)"
+            if key in pg_rates and pg_name in pg_rates[key]:
+                rate_type, value = pg_rates[key][pg_name]
+                if rate_type == "percent":
+                    pg_fees = round(total_for_pg * value / 100, 2)
+                else:
+                    pg_fees = value
+        else:
+            pg_fees = 0
+            rate_type = "None"
 
     # ----- DI & PLB -----
     di_rate = 0 if supplier_name == "Other" else supplier_di.get(supplier_name, 0)
@@ -512,9 +513,8 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 17 Jan 2026
+        Auto-updated via GitHub | Last updated on 11 Jan 2026
     </div>
     """,
     unsafe_allow_html=True
 )
-
