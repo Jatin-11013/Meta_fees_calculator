@@ -427,7 +427,7 @@ if st.button("🧮 Calculate"):
             rate_type, value = pg_rates[payment_category][pg_name]
             if rate_type == "percent":
                 pg_fees = round(total_for_pg * value / 100, 2)
-                else:
+            else:
                 pg_fees = value
                 
     # total_for_pg = booking_amount + handling_fees
