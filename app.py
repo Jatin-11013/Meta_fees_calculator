@@ -410,6 +410,9 @@ if st.button("🧮 Calculate"):
         meta_partner, flight_type, purchase_amount, pax_count
     )
 
+    # ----- HANDLING FEES GST CUT -----
+    handling_fees_net = round(handling_fees / 1.18, 2)
+
     # ----- PG FEES -----
     total_for_pg = booking_amount + handling_fees
     pg_fees = pg_fees_input  # start with manual input
@@ -446,7 +449,7 @@ if st.button("🧮 Calculate"):
 
     # ----- PURCHASE VS SALE -----
     purchase_side = purchase_amount + meta_fee + pg_fees
-    sale_side = booking_amount + di_amount + handling_fees + plb_amount
+    sale_side = booking_amount + di_amount + handling_fees_net + plb_amount
     difference = round(sale_side - purchase_side, 2)
 
     # ----- DISPLAY -----
@@ -513,9 +516,8 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 17 Jan 2026
+        Auto-updated via GitHub | Last updated on 28 Jan 2026
     </div>
     """,
     unsafe_allow_html=True
 )
-
