@@ -34,7 +34,7 @@ st.caption("Operation Team – Safe vs Loss Booking Tool")
 
 # ---------------- DI MASTER ----------------
 supplier_di = {
-    "TBO Flights Online - BOMA774": 0.01,
+    "TBO Flights Online - BOMA774": 0.006,
     "FlyShop Series Online API": 0.01,
     "Flyshop online API": 0.01,
     "Cleartrip Private Limited - AB 2": 0.01,
@@ -50,8 +50,8 @@ supplier_di = {
     "Indigo Regular Fare (Corporate)(KTBOM278)": 0.0045,
     "Indigo Retail Chandni (14354255C)": 0.0,
     "Indigo Regular Corp Chandni (14354255C)": 0.0,
-    "BTO Bhasin Travels HAP OP7": 0.01,
-    "Bhasin Travel Online HAP 7U63": 0.01,
+    "BTO Bhasin Travels HAP OP7": 0.018,
+    "Bhasin Travel Online HAP 7U63": 0.018,
     "AIR IQ": 0.01,
     "Tripjack Flights": 0.005,
     "Etrav HAP 58Y8": 0.01,
@@ -516,8 +516,9 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 28 Jan 2026
+        Auto-updated via GitHub | Last updated on 29 Jan 2026
     </div>
     """,
     unsafe_allow_html=True
 )
+
