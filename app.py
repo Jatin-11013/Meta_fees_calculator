@@ -34,7 +34,7 @@ st.caption("Operation Team – Safe vs Loss Booking Tool")
 
 # ---------------- DI MASTER ----------------
 supplier_di = {
-    "TBO Flights Online - BOMA774": 0.006,
+    "TBO Flights Online - BOMA774": 0.0064,
     "FlyShop Series Online API": 0.01,
     "Flyshop online API": 0.01,
     "Cleartrip Private Limited - AB 2": 0.01,
@@ -521,5 +521,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
