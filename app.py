@@ -42,8 +42,8 @@ supplier_di = {
     "Just Click N Pay Series": 0.01,
     "Fly24hrs Holiday Pvt. Ltd": 0.01,
     "Travelopedia": 0.01,
-    "Etrave Flights": 0.0075,
-    "ETrav Tech Limited": 0.0075,
+    "Etrave Flights": 0.01,
+    "ETrav Tech Limited": 0.01,
     "Etrav Series Flights": 0.01,
     "Tripjack Pvt. Ltd.": 0.005,
     "Indigo Corporate Travelport Universal Api (KTBOM278)": 0.0045,
@@ -516,9 +516,10 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 29 Jan 2026
+        Auto-updated via GitHub | Last updated on 30 Jan 2026
     </div>
     """,
     unsafe_allow_html=True
 )
+
 
