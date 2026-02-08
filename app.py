@@ -400,7 +400,7 @@ def calculate_meta_fee(meta, flight, amount, pax):
         base_fee = 200 if pax <= 2 else 300
     else:
         base_fee = 400 if amount <= 30000 else 600
-    ads_fee = 120 if meta == "Wego Ads" else 0
+    ads_fee = 123 if meta == "Wego Ads" else 0
     return base_fee + ads_fee, base_fee, ads_fee
 
 # ---------------- CALCULATE ----------------
@@ -516,11 +516,12 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 30 Jan 2026
+        Auto-updated via GitHub | Last updated on 08 Feb 2026
     </div>
     """,
     unsafe_allow_html=True
 )
+
 
 
 
