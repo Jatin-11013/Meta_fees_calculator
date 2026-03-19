@@ -96,6 +96,7 @@ supplier_di = {
     "UK VFS": 0,
     "GO KITE TRAVELS AND TOURS LLP": 0,
     "Travel super Mall (IXBAIU9800)": 0,
+    "Gofly Smart Flight Series Supplier" : 0,
     "AirIQ Flights series Supplier": 0
 }
 
@@ -518,7 +519,7 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 08 Mar 2026
+        Auto-updated via GitHub | Last updated on 19 Mar 2026
     </div>
     """,
     unsafe_allow_html=True
