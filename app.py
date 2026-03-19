@@ -37,7 +37,7 @@ supplier_di = {
     "TBO Flights Online - BOMA774": 0,
     "FlyShop Series Online API": 0.01,
     "Flyshop online API": 0.01,
-    "Cleartrip Private Limited - AB 2": 0.01,
+    "Cleartrip Private Limited - AB 2": 0.0075,
     "Travelopedia Series": 0.01,
     "Just Click N Pay Series": 0.01,
     "Fly24hrs Holiday Pvt. Ltd": 0.01,
