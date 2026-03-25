@@ -50,8 +50,9 @@ supplier_di = {
     "Indigo Regular Fare (Corporate)(KTBOM278)": 0.0045,
     "Indigo Retail Chandni (14354255C)": 0.0,
     "Indigo Regular Corp Chandni (14354255C)": 0.0,
-    "BTO Bhasin Travels HAP OP7": 0.0184,
-    "Bhasin Travel Online HAP 7U63": 0.0184,
+    "BTO Bhasin Travels HAP OP7": 0.005,
+    "Bhasin Travel Online HAP 7U63": 0.005,
+    "BTO Supplier Flight":0.005,
     "Travelogy india":0,
     "Travelogy series":0,
     "AIR IQ": 0.01,
@@ -97,6 +98,7 @@ supplier_di = {
     "GO KITE TRAVELS AND TOURS LLP": 0,
     "Travel super Mall (IXBAIU9800)": 0,
     "Gofly Smart Flight Series Supplier" : 0,
+    "Simply Flysmart Private Limited":0,
     "AirIQ Flights series Supplier": 0
 }
 
@@ -519,7 +521,7 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 19 Mar 2026
+        Auto-updated via GitHub | Last updated on 25 Mar 2026
     </div>
     """,
     unsafe_allow_html=True
