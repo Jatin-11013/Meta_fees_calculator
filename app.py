@@ -99,8 +99,7 @@ supplier_di = {
     "Travel super Mall (IXBAIU9800)": 0,
     "Gofly Smart Flight Series Supplier" : 0,
     "Simply Flysmart Private Limited":0,
-    "IGW3535 Normal - Indigo Travelport Universal Api
-":0,
+    "IGW3535 Normal - Indigo Travelport Universal Api":0,
     "AirIQ Flights series Supplier": 0
 }
 
