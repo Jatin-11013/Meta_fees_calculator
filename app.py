@@ -492,7 +492,7 @@ if st.button("🧮 Calculate"):
         plb_percent_text = "0%"
         if supplier_name in ["Indigo Corporate Travelport Universal Api (KTBOM278)", "Indigo Regular Fare (Corporate)(KTBOM278)"]:
             plb_percent_text = "0.75%" if flight_type=="Domestic" else "1.50%"
-        elif supplier_name in ["Indigo Regular Corp Chandni (14354255C)", "Indigo Retail Chandni (14354255C)"]:
+        elif supplier_name in ["Indigo Regular Corp Chandni (14354255C)", "Indigo Retail Chandni (14354255C)", "IGW3535 Normal - Indigo Travelport Universal Api"]:
             plb_percent_text = "1.25%" if flight_type=="Domestic" else "1.85%"
         st.write(f"**Base Fare:** ₹ {base_fare}")
         st.write(f"**PLB % Applied:** {plb_percent_text}")
