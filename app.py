@@ -450,8 +450,7 @@ if st.button("🧮 Calculate"):
     plb_amount = 0
     if supplier_name in ["Indigo Corporate Travelport Universal Api (KTBOM278)", "Indigo Regular Fare (Corporate)(KTBOM278)"]:
         plb_amount = base_fare * (0.0075 if flight_type=="Domestic" else 0.015)
-    elif supplier_name in ["Indigo Regular Corp Chandni (14354255C)", "Indigo Retail Chandni (14354255C)", "IGW3535 Normal - Indigo Travelport Universal Api
-"]:
+    elif supplier_name in ["Indigo Regular Corp Chandni (14354255C)", "Indigo Retail Chandni (14354255C)", "IGW3535 Normal - Indigo Travelport Universal Api"]:
         plb_amount = base_fare * (0.0125 if flight_type=="Domestic" else 0.0185)
     plb_amount = round(plb_amount, 2)
 
