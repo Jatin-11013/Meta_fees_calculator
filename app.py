@@ -109,7 +109,7 @@ supplier_list.insert(0, "Other")
 # ---------------- INPUT ROW 1 ----------------
 c1, c2, c3, c4 = st.columns(4)
 with c1:
-    meta_partner = st.selectbox("Meta Partner", ["None", "Wego", "Wego Ads"])
+    meta_partner = st.selectbox("Meta Partner", ["None", "Wego", "Wego Ads","Sky Scanner Flights"])
 with c2:
     flight_type = st.selectbox("Flight Type", ["Domestic", "International"])
 with c3:
@@ -402,12 +402,24 @@ pg_rates = {
 def calculate_meta_fee(meta, flight, amount, pax):
     if meta == "None":
         return 0, 0, 0
-    if flight == "Domestic":
+    if meta == "Sky Scanner Flights":
+        base_fee = 350 if flight == "Domestic" else 500
+    elif flight == "Domestic":
         base_fee = 200 if pax <= 2 else 300
     else:
         base_fee = 400 if amount <= 30000 else 600
     ads_fee = 123 if meta == "Wego Ads" else 0
     return base_fee + ads_fee, base_fee, ads_fee
+
+# def calculate_meta_fee(meta, flight, amount, pax):
+#     if meta == "None":
+#         return 0, 0, 0
+#     if flight == "Domestic":
+#         base_fee = 200 if pax <= 2 else 300
+#     else:
+#         base_fee = 400 if amount <= 30000 else 600
+#     ads_fee = 123 if meta == "Wego Ads" else 0
+#     return base_fee + ads_fee, base_fee, ads_fee
 
 # ---------------- CALCULATE ----------------
 if st.button("🧮 Calculate"):
@@ -522,7 +534,7 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 04 Apr 2026
+        Auto-updated via GitHub | Last updated on 13 Apr 2026
     </div>
     """,
     unsafe_allow_html=True
