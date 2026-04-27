@@ -403,7 +403,7 @@ def calculate_meta_fee(meta, flight, amount, pax):
     if meta == "None":
         return 0, 0, 0
     if meta == "Sky Scanner Flights":
-        base_fee = 350 if flight == "Domestic" else 500
+        base_fee = 576 if flight == "Domestic" else 576
     elif flight == "Domestic":
         base_fee = 200 if pax <= 2 else 300
     else:
@@ -534,7 +534,7 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Auto-updated via GitHub | Last updated on 13 Apr 2026
+        Auto-updated via GitHub | Last updated on 27 Apr 2026
     </div>
     """,
     unsafe_allow_html=True
